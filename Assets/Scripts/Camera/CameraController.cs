@@ -5,13 +5,15 @@ public class CameraController : MonoBehaviour
 {
 [Header("Movement Settings")]
     public float moveSpeed = 20f;
+    public float smoothTime = 0.2f;
 
     // 인터페이스를 상속받은 모든 스크립트를 담을 리스트
     private List<ICameraMove> _strategies;
+    private Vector3 _currentVelocity;
 
     void Awake()
     {
-        // 내 게임오브젝트에 붙어있는 모든 입력 전략(Mouse, Gamepad 등)을 자동으로 찾아옴
+        // 내 게임오브젝트에 붙어있는 모든 입력 방법을 가져옴
         _strategies = GetComponents<ICameraMove>().ToList();
     }
 
@@ -22,16 +24,19 @@ public class CameraController : MonoBehaviour
         // 모든 전략에게서 "어디로 갈래?" 물어보고 방향 합치기
         foreach (var strategy in _strategies)
         {
+            if(strategy is MonoBehaviour mb && !mb.enabled) continue;
             finalDirection += strategy.GetMoveDirection();
         }
 
         // 실제 이동 처리
         if (finalDirection.sqrMagnitude > 0.001f)
         {
-            // 입력이 겹쳐서 속도가 2배가 되지 않게 정규화
-            if (finalDirection.magnitude > 1f) finalDirection.Normalize();
-
-            transform.Translate(finalDirection * moveSpeed * Time.deltaTime, Space.World);
+            Move(finalDirection.normalized);
         }
+    }
+    private void Move(Vector3 dir)
+    {
+        Vector3 targetPosition = transform.position + dir * moveSpeed * Time.deltaTime;
+        transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref _currentVelocity, smoothTime);
     }
 }
