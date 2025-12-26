@@ -5,25 +5,25 @@ using System.Collections.Generic;
 public class UintController : MonoBehaviour
 {
     [Header("Settings")]
-    public LayerMask unitLayer;    // 유닛 레이어 (Unit)
-    public LayerMask groundLayer;  // 땅 레이어 (Ground) - 이동 명령용
+    public LayerMask unitLayer;    // 유닛 레이어 (AllyUnit 등)
+    public LayerMask groundLayer;  // 땅 레이어 (Ground)
     
-    public RectTransform selectionBoxUI; // 드래그 박스 UI 이미지
-    public float dragThreshold = 10f;    // 드래그 판정 거리
+    public RectTransform selectionBoxUI; 
+    public float dragThreshold = 10f;    
 
     private Camera _mainCamera;
     
-    // 이동 명령을 내리기 위해 ISelectable 대신 구체적인 RTSUnit 타입을 리스트에 담습니다.
-    private List<UintSelect> _selectedUnits = new List<UintSelect>(); 
+    // ★ 수정됨: UintSelect -> RTSUnit (구체적인 유닛 클래스로 변경)
+    private List<RTSUnit> _selectedUnits = new List<RTSUnit>(); 
 
-    // Input Data (Input System에서 받아온 값 저장)
+    // Input Data
     private Vector2 _currentMousePos;
     private bool _isShiftPressed;
     
-    // Drag State (드래그 상태 관리)
+    // Drag State
     private Vector2 _startMousePosition;
     private bool _isDragging;
-    private bool _isSelectHeld;
+   // private bool _isSelectHeld;
 
     private void Awake()
     {
@@ -33,69 +33,44 @@ public class UintController : MonoBehaviour
 
     private void Update()
     {
-        // 드래그 중일 때만 UI 박스 업데이트 함수 호출
-        if (_isDragging)
-        {
-            UpdateSelectionBoxVisual();
-        }
+        if (_isDragging) UpdateSelectionBoxVisual();
     }
 
     // =========================================================
-    // PlayerInput (Send Messages) 수신부
+    // Input System Receivers
     // =========================================================
 
-    // 1. 마우스 좌표 갱신 (Action: Point)
-    private void OnPoint(InputValue value)
-    {
-        _currentMousePos = value.Get<Vector2>();
-    }
+    private void OnPoint(InputValue value) => _currentMousePos = value.Get<Vector2>();
 
-    // 2. Shift 키 상태 갱신 (Action: MultiSelect)
-    private void OnMultiSelect(InputValue value)
-    {
-        _isShiftPressed = value.isPressed;
-    }
+    private void OnMultiSelect(InputValue value) => _isShiftPressed = value.isPressed;
 
-    // 3. 좌클릭 선택 (Action: Select)
     private void OnSelect(InputValue value)
     {
-        // 눌렀을 때 (Start)
         if (value.isPressed)
         {
-            _isSelectHeld = true;
+           // _isSelectHeld = true;
             _startMousePosition = _currentMousePos;
             _isDragging = true;
 
-            // UI 박스 초기화
             if (selectionBoxUI != null)
             {
                 selectionBoxUI.gameObject.SetActive(true);
                 selectionBoxUI.sizeDelta = Vector2.zero;
             }
         }
-        // 뗐을 때 (End) - Input Action에서 "Press And Release" 설정 필수
         else
         {
-            _isSelectHeld = false;
+            //_isSelectHeld = false;
             _isDragging = false;
-            
             if (selectionBoxUI != null) selectionBoxUI.gameObject.SetActive(false);
 
             float dragDistance = Vector2.Distance(_startMousePosition, _currentMousePos);
 
-            // 거리가 짧으면 단순 클릭, 길면 드래그 박스 선택
-            if (dragDistance < dragThreshold)
-            {
-                RaycastCheck();
-            }
-            else
-            {
-                BoxSelectCheck();
-            }
+            if (dragDistance < dragThreshold) RaycastCheck();
+            else BoxSelectCheck();
         }
     }
 
-    // 4. 우클릭 이동 명령 (Action: Command)
     private void OnCommand(InputValue value)
     {
         if (!value.isPressed) return;
@@ -104,19 +79,19 @@ public class UintController : MonoBehaviour
         Ray ray = _mainCamera.ScreenPointToRay(_currentMousePos);
         RaycastHit hit;
 
-        // 땅(Ground)을 클릭했는지 확인하고 이동 명령
+        // 땅을 클릭했을 때만 이동 명령
         if (Physics.Raycast(ray, out hit, 1000f, groundLayer))
         {
             foreach (var unit in _selectedUnits)
             {
+                // ★ RTSUnit의 MoveTo 함수 호출 (FSM 상태를 Move로 변경함)
                 unit.MoveTo(hit.point);
             }
-            // (선택 사항) 클릭 위치에 파티클 효과 등을 넣을 수 있습니다.
         }
     }
 
     // =========================================================
-    // 내부 로직 함수들
+    // Internal Logic
     // =========================================================
 
     private void RaycastCheck()
@@ -126,19 +101,23 @@ public class UintController : MonoBehaviour
 
         if (Physics.Raycast(ray, out hit, 1000f, unitLayer))
         {
-            // RTSUnit 컴포넌트를 찾습니다.
-            UintSelect unit = hit.collider.GetComponent<UintSelect>();
+            // ★ 수정됨: GetComponent<RTSUnit>
+            RTSUnit unit = hit.collider.GetComponent<RTSUnit>();
             if (unit != null)
             {
-                if (!_isShiftPressed)
+                // 아군(Ally)인 경우에만 선택하도록 조건 추가 가능
+                if (unit.faction == Faction.Ally) 
                 {
-                    DeselectAll();
-                    SelectUnit(unit);
-                }
-                else
-                {
-                    if (_selectedUnits.Contains(unit)) DeselectUnit(unit);
-                    else SelectUnit(unit);
+                    if (!_isShiftPressed)
+                    {
+                        DeselectAll();
+                        SelectUnit(unit);
+                    }
+                    else
+                    {
+                        if (_selectedUnits.Contains(unit)) DeselectUnit(unit);
+                        else SelectUnit(unit);
+                    }
                 }
             }
         }
@@ -148,7 +127,6 @@ public class UintController : MonoBehaviour
         }
     }
 
-    // ★ 에러가 났던 부분: 드래그 박스 그리는 함수
     private void UpdateSelectionBoxVisual()
     {
         if (selectionBoxUI == null) return;
@@ -157,7 +135,6 @@ public class UintController : MonoBehaviour
         float height = _currentMousePos.y - _startMousePosition.y;
 
         selectionBoxUI.sizeDelta = new Vector2(Mathf.Abs(width), Mathf.Abs(height));
-        // RectTransform의 Pivot이 (0.5, 0.5)일 때의 위치 계산
         selectionBoxUI.position = (_startMousePosition + _currentMousePos) / 2f;
     }
 
@@ -168,11 +145,14 @@ public class UintController : MonoBehaviour
 
         if (!_isShiftPressed) DeselectAll();
 
-        // 최신 API 사용 (Unity 2023.1+)
-        UintSelect[] allUnits = FindObjectsByType<UintSelect>(FindObjectsSortMode.None); 
+        // ★ 수정됨: FindObjectsByType<RTSUnit>
+        RTSUnit[] allUnits = FindObjectsByType<RTSUnit>(FindObjectsSortMode.None); 
 
         foreach (var unit in allUnits)
         {
+            // 적군은 드래그 선택에서 제외
+            if (unit.faction != Faction.Ally) continue;
+
             Vector3 screenPos = _mainCamera.WorldToScreenPoint(unit.transform.position);
 
             if (screenPos.x > min.x && screenPos.x < max.x &&
@@ -184,10 +164,11 @@ public class UintController : MonoBehaviour
     }
 
     // =========================================================
-    // 유닛 리스트 관리 함수들
+    // List Management
     // =========================================================
 
-    private void SelectUnit(UintSelect unit)
+    // ★ 파라미터 타입 변경: RTSUnit
+    private void SelectUnit(RTSUnit unit)
     {
         if (!_selectedUnits.Contains(unit))
         {
@@ -196,7 +177,7 @@ public class UintController : MonoBehaviour
         }
     }
 
-    private void DeselectUnit(UintSelect unit)
+    private void DeselectUnit(RTSUnit unit)
     {
         if (_selectedUnits.Contains(unit))
         {
