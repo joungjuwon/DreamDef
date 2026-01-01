@@ -1,167 +1,229 @@
 using UnityEngine;
-using UnityEngine.AI;
-using System.Collections;
-using System.Linq;
+using UnityEngine.AI; // NavMeshAgent 사용을 위해 필수
 
-[RequireComponent(typeof(NavMeshAgent))]
-[RequireComponent(typeof(Animator))]
-public class RTSUnit : MonoBehaviour, IDamageable, ISelectable
+public enum Team { Player, Enemy }
+
+[RequireComponent(typeof(NavMeshAgent))] // 이 스크립트를 넣으면 자동으로 Agent도 추가됨
+public class RTSUnit : MonoBehaviour, ISelectable
 {
-    [Header("Data & Settings")]
-    public UnitDataSO data;
-    public Faction faction;
+    [Header("Settings")]
+    public Team team = Team.Player;      // 유닛 팀 설정
+    public UnitType unitType = UnitType.Troop; // 유닛 타입을 설정 (기본값: Troop)
     public GameObject selectionMarker;
-
-    [Header("UI")]
-    public HealthBar healthBar; // 인스펙터 연결 (비어있으면 자동 검색)
-
-    // 내부 변수
+    
     private NavMeshAgent _agent;
-    private Animator _anim;
-    private UnitState _currentState;
+    private ConstructionSite _currentSite; // 현재 위치한 건설 부지
+
+    [Header("Combat Stats")]
+    public float maxHealth = 100f;       // 최대 체력
+    public float attackDamage = 10f;     // 공격력
+    public float attackRange = 5f;       // 사거리
+    public float detectionRange = 10f;   // 감지 범위
+    public float attackCooldown = 1.0f;  // 공격 속도 (초)
+    public CombatStyle combatStyle = CombatStyle.Melee; // 공격 타입
+    public GameObject projectilePrefab;  // 투사체 프리팹 (원거리용)
+    public Transform projectileSpawnPoint; // 투사체 발사 위치 (없으면 본체 위치)
+    public LayerMask targetLayer;        // 적 감지 레이어 (Inspector에서 설정 필요)
 
     private float _currentHealth;
-    private float _attackCooldown;
-    private IDamageable _currentTarget;
-    private LayerMask _enemyLayerMask;
+    private float _lastAttackTime;
+    private RTSUnit _targetUnit;         // 현재 공격 대상
+    private bool _hasMoveCommand;        // 플레이어 이동 명령 상태 확인용
+
+    public enum CombatStyle { Melee, Ranged }
 
     private void Awake()
     {
         _agent = GetComponent<NavMeshAgent>();
-        _anim = GetComponent<Animator>();
-
-        // ★ [핵심] 프리팹 연결이 끊겼을 경우, 내 자식 오브젝트에서 자동으로 찾음
-        if (healthBar == null)
-        {
-            healthBar = GetComponentInChildren<HealthBar>();
-        }
-
-        if (data != null)
-        {
-            _agent.speed = data.moveSpeed;
-            _currentHealth = data.maxHealth;
-        }
-        else
-        {
-            _currentHealth = 100f; // 기본값
-        }
-
-        if (selectionMarker) selectionMarker.SetActive(false);
     }
 
     private void Start()
     {
-        InitializeFaction(faction);
-        ChangeState(UnitState.Idle);
+        _currentHealth = maxHealth;
+        if(selectionMarker != null) selectionMarker.SetActive(false);
 
-        // ★ [핵심] 체력바 독립시키기
-        if (healthBar != null)
-        {
-            // 1. 유닛이 회전해도 따라돌지 않게 부모 해제
-            healthBar.transform.SetParent(null);
-            
-            // 2. 초기화 (나 자신을 타겟으로 넘김)
-            healthBar.Initialize(transform, data != null ? data.maxHealth : 100f, _currentHealth);
-        }
-    }
-
-    public void InitializeFaction(Faction newFaction)
-    {
-        faction = newFaction;
-        SetEnemyLayer();
+        // 범위 확인용 콜라이더 생성 (빈 오브젝트 + SphereCollider)
+        CreateRangeCollider("AttackRange", attackRange);
+        CreateRangeCollider("DetectionRange", detectionRange);
     }
 
     private void Update()
     {
-        if (_currentState == UnitState.Dead) return;
-        if (_attackCooldown > 0) _attackCooldown -= Time.deltaTime;
-
-        switch (_currentState)
+        // 1. 플레이어 이동 명령 처리 (최우선 순위)
+        if (_hasMoveCommand)
         {
-            case UnitState.Idle: UpdateIdle(); break;
-            case UnitState.Move: UpdateMove(); break;
-            case UnitState.Chase: UpdateChase(); break;
-            case UnitState.Attack: UpdateAttack(); break;
+            // 목적지에 도착했는지 확인
+            if (!_agent.pathPending && _agent.remainingDistance <= _agent.stoppingDistance)
+            {
+                _hasMoveCommand = false; // 이동 완료, 자동 공격 모드 복귀
+                _agent.isStopped = false;
+            }
+            return; // 이동 중에는 자동 공격 로직을 수행하지 않음
+        }
+
+        // 2. 타겟이 없으면 주변 적 감지
+        if (_targetUnit == null)
+        {
+            DetectEnemies();
+        }
+
+        // 3. 전투 및 추적 로직
+        if (_targetUnit != null)
+        {
+            float distance = Vector3.Distance(transform.position, _targetUnit.transform.position);
+            
+            if (distance <= attackRange)
+            {
+                // 사거리 내: 정지 후 공격
+                _agent.isStopped = true;
+
+                // 타겟 바라보기
+                Vector3 dir = (_targetUnit.transform.position - transform.position).normalized;
+                dir.y = 0; // 위아래 회전 방지
+                if (dir != Vector3.zero) transform.rotation = Quaternion.LookRotation(dir);
+
+                // 공격 실행
+                if (Time.time >= _lastAttackTime + attackCooldown)
+                {
+                    Attack();
+                    _lastAttackTime = Time.time;
+                }
+            }
+            else
+            {
+                // 사거리 밖: 추적 (이동)
+                _agent.isStopped = false;
+                _agent.SetDestination(_targetUnit.transform.position);
+            }
         }
     }
 
-    // ... (ChangeState, UpdateIdle, UpdateMove 등 FSM 로직은 기존과 동일) ...
-    // ... (AI_CommandMove, MoveTo 등 이동 로직도 기존과 동일) ...
-
-    // FSM 상태 변경 및 로직 생략 (너무 길어서 핵심만 표시, 기존 코드 유지하세요)
-    public void ChangeState(UnitState newState)
+    // 이동 명령을 받는 함수 추가
+    public void MoveTo(Vector3 destination)
     {
-        if (_currentState == UnitState.Dead) return;
-        _currentState = newState;
-        switch (_currentState)
+        // NavMesh 위에서만 작동하므로 안전장치
+        if (_agent.isOnNavMesh)
         {
-            case UnitState.Idle: _anim.SetBool("IsMoving", false); _agent.ResetPath(); break;
-            case UnitState.Move: 
-            case UnitState.Chase: _anim.SetBool("IsMoving", true); break;
-            case UnitState.Attack: _anim.SetBool("IsMoving", false); _agent.ResetPath(); break;
-            case UnitState.Dead: HandleDeath(); break;
+            _hasMoveCommand = true;     // 플레이어 명령 상태 활성화
+            _targetUnit = null;         // 기존 타겟 해제 (이동 우선)
+            _agent.isStopped = false;   // 정지 상태 해제
+            _agent.SetDestination(destination);
         }
     }
-    
-    // 생략된 부분: UpdateIdle, UpdateMove, UpdateChase, UpdateAttack, MoveTo, AI_CommandMove
-    // 기존에 작성해드린 코드 그대로 사용하시면 됩니다.
-    private void UpdateIdle() { FindTarget(); if(_currentTarget != null) ChangeState(UnitState.Chase); }
-    private void UpdateMove() 
-    {
-        if(Time.time % 0.5f < Time.deltaTime) { FindTarget(); if(_currentTarget != null) { ChangeState(UnitState.Chase); return; } }
-        if (!_agent.hasPath || _agent.pathPending) return;
-        if (_agent.remainingDistance <= _agent.stoppingDistance && _agent.velocity.sqrMagnitude == 0f) ChangeState(UnitState.Idle);
-    }
-    private void UpdateChase() 
-    { 
-        if(!IsTargetValid()) { _currentTarget=null; ChangeState(UnitState.Idle); return; }
-        if(Vector3.Distance(transform.position, _currentTarget.GetTransform().position) <= data.attackRange) ChangeState(UnitState.Attack);
-        else _agent.SetDestination(_currentTarget.GetTransform().position);
-    }
-    private void UpdateAttack()
-    {
-        if(!IsTargetValid()) { _currentTarget=null; ChangeState(UnitState.Idle); return; }
-        if(Vector3.Distance(transform.position, _currentTarget.GetTransform().position) > data.attackRange) { ChangeState(UnitState.Chase); return; }
-        Vector3 dir = (_currentTarget.GetTransform().position - transform.position).normalized; dir.y=0;
-        if(dir != Vector3.zero) transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dir), Time.deltaTime*10f);
-        if(_attackCooldown <= 0) { _anim.SetTrigger("Attack"); PerformAttackDamage(); _attackCooldown=1f/data.attackSpeed; }
-    }
-    public void MoveTo(Vector3 dest) { if(faction == Faction.Enemy || _currentState == UnitState.Dead) return; ExecuteMove(dest); }
-    public void AI_CommandMove(Vector3 dest) { if(faction != Faction.Enemy || _currentState == UnitState.Dead) return; ExecuteMove(dest); }
-    private void ExecuteMove(Vector3 dest) { _currentTarget=null; _agent.isStopped=false; _agent.SetDestination(dest); ChangeState(UnitState.Move); }
-    public void PerformAttackDamage() { if(_currentTarget!=null) _currentTarget.TakeDamage(data.attackDamage); } // 필요 시 투사체 로직 복구
-    private void FindTarget() { Collider[] hits = Physics.OverlapSphere(transform.position, data.searchRange, _enemyLayerMask); if(hits.Length>0) _currentTarget=hits.OrderBy(x=>Vector3.Distance(transform.position, x.transform.position)).First().GetComponent<IDamageable>(); }
-    private bool IsTargetValid() { if(_currentTarget==null) return false; if((_currentTarget as Object)==null) return false; return _currentTarget.GetGameObject().activeInHierarchy; }
-    private void SetEnemyLayer() { if(faction==Faction.Ally) _enemyLayerMask=LayerMask.GetMask("EnemyUnit","EnemyBuilding"); else _enemyLayerMask=LayerMask.GetMask("AllyUnit","AllyBuilding"); }
-    public Transform GetTransform() => transform; public GameObject GetGameObject() => gameObject; public void OnSelected() => selectionMarker?.SetActive(true); public void OnDeselected() => selectionMarker?.SetActive(false);
 
+    // 현재 건설 부지 설정 (ConstructionSite에서 호출)
+    public void SetCurrentConstructionSite(ConstructionSite site)
+    {
+        _currentSite = site;
+    }
+
+    // 현재 건설 부지 가져오기 (UintController에서 호출)
+    public ConstructionSite GetCurrentConstructionSite()
+    {
+        return _currentSite;
+    }
+
+    // Trigger 진입 감지
+    private void OnTriggerEnter(Collider other)
+    {
+        var site = other.GetComponent<ConstructionSite>();
+        if (site != null)
+        {
+            site.OnUnitEnter(this);
+        }
+    }
+
+    // Trigger 퇴장 감지
+    private void OnTriggerExit(Collider other)
+    {
+        var site = other.GetComponent<ConstructionSite>();
+        if (site != null)
+        {
+            site.OnUnitExit(this);
+        }
+    }
+
+    // 적 감지 함수
+    private void DetectEnemies()
+    {
+        Collider[] hits = Physics.OverlapSphere(transform.position, detectionRange, targetLayer);
+        foreach (var hit in hits)
+        {
+            RTSUnit unit = hit.GetComponent<RTSUnit>();
+            // 유닛이 존재하고, 나 자신이 아니며, 다른 팀일 경우 타겟으로 설정
+            if (unit != null && unit != this && unit.team != this.team)
+            {
+                SetTarget(unit);
+                break; // 한 명만 찾으면 루프 종료
+            }
+        }
+    }
+
+    // 전투 관련 함수들
+    public void SetTarget(RTSUnit target)
+    {
+        _targetUnit = target;
+    }
 
     public void TakeDamage(float amount)
     {
-        if (_currentState == UnitState.Dead) return;
-
-        float finalDmg = Mathf.Max(0, amount - data.defense);
-        _currentHealth -= finalDmg;
-
-        // 체력바 갱신
-        if (healthBar != null) healthBar.UpdateHealth(_currentHealth);
-
-        if (_currentHealth <= 0) ChangeState(UnitState.Dead);
+        _currentHealth -= amount;
+        if (_currentHealth <= 0)
+        {
+            Die();
+        }
     }
 
-    private void HandleDeath()
+    private void Attack()
     {
-        _anim.SetTrigger("Die");
-        _agent.enabled = false;
-        if (selectionMarker) selectionMarker.SetActive(false);
-        
-        // 물리 충돌 끄기
-        Collider col = GetComponent<Collider>();
-        if (col != null) col.enabled = false;
+        if (combatStyle == CombatStyle.Melee)
+        {
+            // 근거리: 즉시 데미지
+            _targetUnit.TakeDamage(attackDamage);
+        }
+        else if (combatStyle == CombatStyle.Ranged)
+        {
+            // 원거리: 투사체 발사
+            if (projectilePrefab != null)
+            {
+                Vector3 spawnPos = projectileSpawnPoint != null ? projectileSpawnPoint.position : transform.position;
+                GameObject projObj = Instantiate(projectilePrefab, spawnPos, Quaternion.identity);
+                Projectile proj = projObj.GetComponent<Projectile>();
+                if (proj != null) proj.Setup(_targetUnit, attackDamage);
+            }
+        }
+    }
 
-        // 체력바도 즉시 삭제 (선택사항 - 안 해도 HealthBar가 알아서 사라짐)
-        if (healthBar != null) Destroy(healthBar.gameObject);
+    // 범위 시각화용 콜라이더 생성 함수
+    private void CreateRangeCollider(string name, float range)
+    {
+        GameObject go = new GameObject(name);
+        go.transform.SetParent(transform);
+        go.transform.localPosition = Vector3.zero;
 
-        Destroy(gameObject, 3f);
+        SphereCollider col = go.AddComponent<SphereCollider>();
+        col.isTrigger = true;
+        col.radius = range;
+
+        // 부모(Unit)의 OnTriggerEnter 간섭 방지를 위해 리지드바디 추가 (이벤트 분리)
+        Rigidbody rb = go.AddComponent<Rigidbody>();
+        rb.isKinematic = true;
+        rb.useGravity = false;
+    }
+
+    private void Die()
+    {
+        // 사망 처리 (파괴)
+        Destroy(gameObject);
+    }
+
+    public void OnSelected()
+    {
+        if(selectionMarker != null) selectionMarker.SetActive(true);
+    }
+
+    public void OnDeselected()
+    {
+        if(selectionMarker != null) selectionMarker.SetActive(false);
     }
 }

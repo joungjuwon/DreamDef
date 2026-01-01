@@ -8,7 +8,7 @@ public class MouseCameraMove : MonoBehaviour, ICameraMove
     마우스로 화면 스크롤을 위한 엣지의 마우스 감지를 하기 위한 마우스의 위치판단과 방향성 판단을 위한 스크립트 
     */
 
-    [Range(0.01f, 0.1f)] //비율 최대 - 최소 값
+    [Range(0.01f, 0.3f)] //비율 최대 - 최소 값
     public float edgePercentage = 0.05f; //바뀌는 해상도에 맞추어 비율로 이동 영역을 측정하기 위한 변수.
 
     public Vector3 GetMoveDirection()

@@ -2,60 +2,36 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-    private Vector3 targetPos;
-    private float speed;
-    private float damage;
-    private float explosionRadius;
-    private bool isExplosive;
-    private bool spawnsZone;
-    private GameObject zonePrefab;
-    private LayerMask targetLayer;
+    private RTSUnit _target;
+    private float _damage;
+    private float _speed = 20f; // 투사체 속도
 
-    public void Setup(Vector3 target, float spd, float dmg, LayerMask layer, bool explosive = false, float radius = 0, bool spawnZone = false, GameObject zone = null)
+    // 투사체 초기화 함수
+    public void Setup(RTSUnit target, float damage)
     {
-        targetPos = target;
-        speed = spd;
-        damage = dmg;
-        targetLayer = layer;
-        isExplosive = explosive;
-        explosionRadius = radius;
-        spawnsZone = spawnZone;
-        zonePrefab = zone;
+        _target = target;
+        _damage = damage;
+        Destroy(gameObject, 5f); // 안전장치: 5초 후 자동 삭제 (타겟을 못 맞췄을 경우 대비)
     }
 
-    void Update()
+    private void Update()
     {
-        // 타겟 위치로 이동
-        transform.position = Vector3.MoveTowards(transform.position, targetPos, speed * Time.deltaTime);
-
-        // 도착 체크
-        if (Vector3.Distance(transform.position, targetPos) < 0.1f)
+        // 타겟이 사라지면(죽으면) 투사체도 소멸
+        if (_target == null)
         {
-            HitTarget();
-        }
-    }
-
-    void HitTarget()
-    {
-        if (isExplosive) // 4. 원거리 범위딜
-        {
-            Collider[] hits = Physics.OverlapSphere(transform.position, explosionRadius, targetLayer);
-            foreach (var hit in hits)
-            {
-                hit.GetComponent<IDamageable>()?.TakeDamage(damage);
-            }
-        }
-        else if (spawnsZone && zonePrefab != null) // 6. 투사체 후 장판
-        {
-            Instantiate(zonePrefab, transform.position, Quaternion.identity);
-        }
-        else // 3. 원거리 단일딜
-        {
-            // 정확한 충돌 처리를 위해 작은 구체 검사
-            Collider[] hits = Physics.OverlapSphere(transform.position, 0.5f, targetLayer);
-            if(hits.Length > 0) hits[0].GetComponent<IDamageable>()?.TakeDamage(damage);
+            Destroy(gameObject);
+            return;
         }
 
-        Destroy(gameObject);
+        // 타겟 방향으로 이동
+        Vector3 direction = (_target.transform.position - transform.position).normalized;
+        transform.position += direction * _speed * Time.deltaTime;
+
+        // 타겟에 도달했는지 확인 (거리 체크)
+        if (Vector3.Distance(transform.position, _target.transform.position) < 0.5f)
+        {
+            _target.TakeDamage(_damage); // 데미지 적용
+            Destroy(gameObject); // 투사체 삭제
+        }
     }
 }
