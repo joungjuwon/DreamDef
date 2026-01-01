@@ -11,15 +11,15 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - Unit
+  - PlayerUnit
   - Water
   - UI
   - Ground
-  - AllyUnit
-  - AllyBuilding
   - EnemyUnit
-  - EnemyBuilding
-  - Ground
+  - 
+  - 
+  - Base
+  - 
   - 
   - 
   - 
