@@ -2,12 +2,12 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-    private RTSUnit _target;
+    private IDamageable _target;
     private float _damage;
     private float _speed = 20f; // 투사체 속도
 
     // 투사체 초기화 함수
-    public void Setup(RTSUnit target, float damage)
+    public void Setup(IDamageable target, float damage)
     {
         _target = target;
         _damage = damage;
@@ -17,7 +17,7 @@ public class Projectile : MonoBehaviour
     private void Update()
     {
         // 타겟이 사라지면(죽으면) 투사체도 소멸
-        if (_target == null)
+        if (_target == null || _target.Equals(null))
         {
             Destroy(gameObject);
             return;

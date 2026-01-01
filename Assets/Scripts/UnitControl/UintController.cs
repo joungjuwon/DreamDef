@@ -16,7 +16,7 @@ public class UintController : MonoBehaviour
     private Camera _mainCamera;
     
     // 이동 명령을 내리기 위해 ISelectable 대신 구체적인 RTSUnit 타입을 리스트에 담습니다.
-    private List<RTSUnit> _selectedUnits = new List<RTSUnit>(); 
+    private List<PlayerUnit> _selectedUnits = new List<PlayerUnit>(); 
 
     // Input Data (Input System에서 받아온 값 저장)
     private Vector2 _currentMousePos;
@@ -117,12 +117,12 @@ public class UintController : MonoBehaviour
         if (!value.isPressed) return;
 
         // 엘리트 유닛 찾기 (선택된 유닛 중에서 먼저 찾고, 없으면 전체에서 찾음)
-        RTSUnit eliteUnit = _selectedUnits.FirstOrDefault(u => u.unitType == UnitType.Elite);
+        PlayerUnit eliteUnit = _selectedUnits.FirstOrDefault(u => u.unitType == UnitType.Elite);
 
         if (eliteUnit == null)
         {
             // 선택하지 않았더라도 씬에 있는 엘리트 유닛을 찾아 명령 수행 (메인 캐릭터 개념)
-            eliteUnit = FindObjectsByType<RTSUnit>(FindObjectsSortMode.None)
+            eliteUnit = FindObjectsByType<PlayerUnit>(FindObjectsSortMode.None)
                         .FirstOrDefault(u => u.unitType == UnitType.Elite);
         }
 
@@ -140,7 +140,7 @@ public class UintController : MonoBehaviour
     private void MoveSelectedUnits(Vector3 targetPosition)
     {
         // 선택된 유닛 중 엘리트 유닛이 있는지 확인합니다.
-        RTSUnit leader = _selectedUnits.FirstOrDefault(unit => unit.unitType == UnitType.Elite);
+        PlayerUnit leader = _selectedUnits.FirstOrDefault(unit => unit.unitType == UnitType.Elite);
 
         // 엘리트 유닛이 선택된 경우
         if (leader != null)
@@ -149,7 +149,7 @@ public class UintController : MonoBehaviour
             leader.MoveTo(targetPosition);
 
             // 나머지 유닛들(병력 및 다른 엘리트 유닛)은 리더의 목표 지점 주변에 대형을 형성합니다.
-            List<RTSUnit> followers = _selectedUnits.Where(unit => unit != leader).ToList();
+            List<PlayerUnit> followers = _selectedUnits.Where(unit => unit != leader).ToList();
             if (followers.Count > 0)
             {
                 MoveInFormation(followers, targetPosition);
@@ -163,7 +163,7 @@ public class UintController : MonoBehaviour
     }
 
     // 지정된 유닛들을 특정 지점 주변에 대형을 이루어 이동시키는 함수
-    private void MoveInFormation(List<RTSUnit> units, Vector3 formationCenter)
+    private void MoveInFormation(List<PlayerUnit> units, Vector3 formationCenter)
     {
         int count = units.Count;
         if (count == 0) return;
@@ -199,8 +199,8 @@ public class UintController : MonoBehaviour
 
         if (Physics.Raycast(ray, out hit, 1000f, unitLayer))
         {
-            // RTSUnit 컴포넌트를 찾습니다.
-            RTSUnit unit = hit.collider.GetComponent<RTSUnit>();
+            // PlayerUnit 컴포넌트를 찾습니다. (적 유닛은 PlayerUnit이 없으므로 선택 안됨)
+            PlayerUnit unit = hit.collider.GetComponent<PlayerUnit>();
             if (unit != null)
             {
                 if (!_isShiftPressed)
@@ -242,7 +242,7 @@ public class UintController : MonoBehaviour
         if (!_isShiftPressed) DeselectAll();
 
         // 최신 API 사용 (Unity 2023.1+)
-        RTSUnit[] allUnits = FindObjectsByType<RTSUnit>(FindObjectsSortMode.None); 
+        PlayerUnit[] allUnits = FindObjectsByType<PlayerUnit>(FindObjectsSortMode.None); 
 
         foreach (var unit in allUnits)
         {
@@ -260,7 +260,7 @@ public class UintController : MonoBehaviour
     // 유닛 리스트 관리 함수들
     // =========================================================
 
-    private void SelectUnit(RTSUnit unit)
+    private void SelectUnit(PlayerUnit unit)
     {
         if (!_selectedUnits.Contains(unit))
         {
@@ -269,7 +269,7 @@ public class UintController : MonoBehaviour
         }
     }
 
-    private void DeselectUnit(RTSUnit unit)
+    private void DeselectUnit(PlayerUnit unit)
     {
         if (_selectedUnits.Contains(unit))
         {

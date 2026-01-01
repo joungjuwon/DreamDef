@@ -5,7 +5,6 @@ public class ConstructionSite : MonoBehaviour
     [Header("건설 설정")]
     [SerializeField] private GameObject buildingPrefab; // 지어질 건물 프리팹
     [SerializeField] private GameObject previewObject;  // 반투명 미리보기 오브젝트 (Editor에서 미리 배치 후 비활성화 해두세요)
-    [SerializeField] private int buildCost = 100;       // 건설 비용
 
     private bool _isBuilt = false;
 
@@ -25,7 +24,7 @@ public class ConstructionSite : MonoBehaviour
     }
 
     // 유닛이 구역에 들어왔을 때
-    public void OnUnitEnter(RTSUnit unit)
+    public void OnUnitEnter(PlayerUnit unit)
     {
         if (_isBuilt) return;
 
@@ -38,7 +37,7 @@ public class ConstructionSite : MonoBehaviour
     }
 
     // 유닛이 구역에서 나갔을 때
-    public void OnUnitExit(RTSUnit unit)
+    public void OnUnitExit(PlayerUnit unit)
     {
         if (unit.unitType == UnitType.Elite)
         {
@@ -51,9 +50,6 @@ public class ConstructionSite : MonoBehaviour
     public void Build()
     {
         if (_isBuilt) return;
-
-        // TODO: 여기서 자원 매니저를 통해 자원을 소모하는 로직을 추가하세요.
-        // if (!ResourceManager.Instance.Spend(buildCost)) return;
 
         Debug.Log("건설 완료!");
 
