@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 public class EnemyUnit : RTSUnit, IDamageable
 {
@@ -19,6 +20,9 @@ public class EnemyUnit : RTSUnit, IDamageable
     private float _lastAttackTime;
     private IDamageable _targetUnit;
     private float _lastDetectionTime;
+
+    public event Action OnDeath;
+    private bool _isDead = false;
 
     public enum CombatStyle { Melee, Ranged }
 
@@ -113,6 +117,8 @@ public class EnemyUnit : RTSUnit, IDamageable
 
     public void TakeDamage(float amount)
     {
+        if (_isDead) return;
+
         _currentHealth -= amount;
         if (_currentHealth <= 0) Die();
     }
@@ -137,6 +143,8 @@ public class EnemyUnit : RTSUnit, IDamageable
 
     private void Die()
     {
+        _isDead = true;
+        OnDeath?.Invoke();
         Destroy(gameObject);
     }
 

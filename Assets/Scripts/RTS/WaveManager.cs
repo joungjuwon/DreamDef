@@ -5,16 +5,32 @@ using System.Collections;
 
 public class WaveManager : MonoBehaviour
 {
+    [System.Serializable]
+    public class SpawnGroup
+    {
+        public GameObject enemyPrefab; // 소환할 적 프리팹
+        public int count; // 소환할 수
+        public float spawnInterval = 1f; // 소환 간격
+        public float delayBefore = 0f; // 그룹 시작 전 대기 시간
+    }
+
+    [System.Serializable]
+    public class WaveData
+    {
+        public SpawnGroup[] spawnGroups; // 해당 웨이브의 스폰 그룹들
+    }
+
     [Header("Wave Settings")]
-    public GameObject enemyPrefab; // 소환할 적 유닛 프리팹
+    public WaveData[] waves; // 전체 웨이브 설정
     public Transform[] spawnPoints; // 적 유닛 소환 위치들
-    public float timeBetweenWaves = 5f; // 웨이브 사이의 대기 시간 (현재는 수동 시작)
 
     [Header("UI")]
     public TextMeshProUGUI waveText; // 웨이브 정보를 표시할 UI 텍스트 (TMP)
 
-    private int _currentWaveNumber = 0;
+    private int _currentWaveIndex = 0;
     private bool _isWaveActive = false;
+    private int _activeEnemyCount = 0;
+    private bool _isSpawning = false;
 
     void Start()
     {
@@ -37,37 +53,89 @@ public class WaveManager : MonoBehaviour
 
     private IEnumerator StartWave()
     {
+        // 더 이상 진행할 웨이브가 없으면 종료
+        if (_currentWaveIndex >= waves.Length) yield break;
+
         _isWaveActive = true;
-        _currentWaveNumber++;
+        _isSpawning = true;
 
         // UI에 웨이브 정보 표시
         if (waveText != null)
         {
-            waveText.text = "WAVE " + _currentWaveNumber;
+            waveText.text = "WAVE " + (_currentWaveIndex + 1);
             waveText.gameObject.SetActive(true);
             yield return new WaitForSeconds(2f); // 2초간 메시지 표시
             waveText.gameObject.SetActive(false);
         }
 
         // 적 소환
-        yield return StartCoroutine(SpawnEnemies());
+        yield return StartCoroutine(SpawnEnemies(waves[_currentWaveIndex]));
 
-        // 다음 웨이브를 위해 상태 초기화
-        _isWaveActive = false;
+        _currentWaveIndex++;
+        _isSpawning = false;
+
+        // 스폰이 끝났는데 남은 적이 없으면 바로 클리어 처리 (예: 적이 없는 웨이브)
+        if (_activeEnemyCount == 0)
+        {
+            OnWaveClear();
+        }
+
+        // _isWaveActive는 적이 모두 죽을 때까지 true로 유지됩니다.
     }
 
-    private IEnumerator SpawnEnemies()
+    private IEnumerator SpawnEnemies(WaveData waveData)
     {
-        // 현재 웨이브 숫자에 비례하여 소환할 적의 수를 늘립니다.
-        int enemiesToSpawn = _currentWaveNumber * 2; 
-
-        for (int i = 0; i < enemiesToSpawn; i++)
+        foreach (var group in waveData.spawnGroups)
         {
-            if (spawnPoints.Length == 0) yield break;
-            Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
+            if (group.delayBefore > 0) yield return new WaitForSeconds(group.delayBefore);
 
-            if (enemyPrefab != null) Instantiate(enemyPrefab, spawnPoint.position, spawnPoint.rotation);
-            yield return new WaitForSeconds(0.5f); // 적들이 한 번에 소환되지 않도록 약간의 딜레이
+            for (int i = 0; i < group.count; i++)
+            {
+                if (spawnPoints.Length == 0) yield break;
+                Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
+
+                if (group.enemyPrefab != null)
+                {
+                    GameObject enemyObj = Instantiate(group.enemyPrefab, spawnPoint.position, spawnPoint.rotation);
+                    EnemyUnit enemyUnit = enemyObj.GetComponent<EnemyUnit>();
+                    if (enemyUnit != null)
+                    {
+                        _activeEnemyCount++;
+                        enemyUnit.OnDeath += HandleEnemyDeath;
+                    }
+                }
+                yield return new WaitForSeconds(group.spawnInterval);
+            }
+        }
+    }
+
+    private void HandleEnemyDeath()
+    {
+        _activeEnemyCount--;
+        if (_activeEnemyCount <= 0 && !_isSpawning)
+        {
+            OnWaveClear();
+        }
+    }
+
+    private void OnWaveClear()
+    {
+        if (_currentWaveIndex >= waves.Length)
+        {
+            if (waveText != null)
+            {
+                waveText.text = "STAGE CLEAR";
+                waveText.gameObject.SetActive(true);
+            }
+        }
+        else
+        {
+            if (waveText != null)
+            {
+                waveText.text = "WAVE CLEAR";
+                waveText.gameObject.SetActive(true);
+            }
+            _isWaveActive = false; // 다음 웨이브 시작 가능 상태로 변경
         }
     }
 }
