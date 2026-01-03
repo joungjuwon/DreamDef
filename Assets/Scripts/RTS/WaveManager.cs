@@ -130,12 +130,24 @@ public class WaveManager : MonoBehaviour
         }
         else
         {
-            if (waveText != null)
-            {
-                waveText.text = "WAVE CLEAR";
-                waveText.gameObject.SetActive(true);
-            }
+            StartCoroutine(ShowWaveClearMessage());
             _isWaveActive = false; // 다음 웨이브 시작 가능 상태로 변경
+        }
+    }
+
+    private IEnumerator ShowWaveClearMessage()
+    {
+        if (waveText != null)
+        {
+            waveText.text = "WAVE CLEAR";
+            waveText.gameObject.SetActive(true);
+            yield return new WaitForSeconds(2f);
+
+            // 다음 웨이브가 시작되지 않았을 때만 텍스트를 비활성화합니다.
+            if (!_isWaveActive)
+            {
+                waveText.gameObject.SetActive(false);
+            }
         }
     }
 }
