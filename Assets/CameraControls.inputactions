@@ -35,7 +35,7 @@
                 },
                 {
                     "name": "Point",
-                    "type": "Value",
+                    "type": "PassThrough",
                     "id": "d7da4bdf-cd9d-4d51-92d6-97db9ebdf79a",
                     "expectedControlType": "Vector2",
                     "processors": "",
@@ -55,6 +55,15 @@
                     "name": "Build",
                     "type": "Button",
                     "id": "f090ffe1-16de-4a5d-8ce8-66a5ecd0a457",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "StartWave",
+                    "type": "Button",
+                    "id": "75653a7f-0e4c-4d11-87e7-986f5e41fa01",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -169,6 +178,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Build",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5cd7d4f2-da75-4f4b-9e11-ed5575bd6b30",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "StartWave",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

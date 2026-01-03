@@ -88,14 +88,26 @@ public class EnemyUnit : RTSUnit, IDamageable
     private void DetectEnemies()
     {
         Collider[] hits = Physics.OverlapSphere(transform.position, detectionRange, targetLayer);
+        IDamageable closestUnit = null;
+        float closestDistance = float.MaxValue;
+
         foreach (var hit in hits)
         {
             IDamageable unit = hit.GetComponent<IDamageable>();
             if (unit != null && unit != (IDamageable)this)
             {
-                _targetUnit = unit;
-                break;
+                float distance = Vector3.Distance(transform.position, unit.transform.position);
+                if (distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    closestUnit = unit;
+                }
             }
+        }
+
+        if (closestUnit != null)
+        {
+            _targetUnit = closestUnit;
         }
     }
 
