@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 public class PlayerUnit : RTSUnit, ISelectable, IDamageable
 {
@@ -24,6 +25,8 @@ public class PlayerUnit : RTSUnit, ISelectable, IDamageable
     private float _lastAttackTime;
     private IDamageable _targetUnit;     // 현재 공격 대상
     private float _lastDetectionTime;    // 감지 최적화용 타이머
+
+    public event Action<PlayerUnit> OnDeath;
 
     public enum CombatStyle { Melee, Ranged }
 
@@ -192,6 +195,7 @@ public class PlayerUnit : RTSUnit, ISelectable, IDamageable
 
     private void Die()
     {
+        OnDeath?.Invoke(this);
         Destroy(gameObject);
     }
 

@@ -24,9 +24,6 @@ public class WaveManager : MonoBehaviour
     public WaveData[] waves; // 전체 웨이브 설정
     public Transform[] spawnPoints; // 적 유닛 소환 위치들
 
-    [Header("Resource Settings")]
-    public int resourcePerBuilding = 10; // 웨이브 클리어 시 건물 당 획득 자원
-
     [Header("UI")]
     public TextMeshProUGUI waveText; // 웨이브 정보를 표시할 UI 텍스트 (TMP)
 
@@ -126,12 +123,14 @@ public class WaveManager : MonoBehaviour
         // --- 자원 지급 로직 추가 ---
         if (ResourceManager.Instance != null)
         {
-            int buildingCount = ResourceBuilding.AllBuildings.Count;
-            if (buildingCount > 0)
+            int totalResourcesGained = 0;
+            foreach (var building in ResourceBuilding.AllBuildings)
             {
-                int resourcesGained = buildingCount * resourcePerBuilding;
-                ResourceManager.Instance.AddResources(resourcesGained);
+                totalResourcesGained += building.resourcesPerWave;
             }
+
+            if (totalResourcesGained > 0)
+                ResourceManager.Instance.AddResources(totalResourcesGained);
         }
         // --------------------------
 
