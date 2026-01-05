@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 6eff13d54072f49579e3c436790e215b
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 179865
+  packageName: Elf RTS Building Set - Proto Series
+  packageVersion: 1.2
+  assetPath: Assets/BitGem/RTS_Elves_Buildings/Prefabs/elf_totem_pole_1.prefab
+  uploadId: 407524

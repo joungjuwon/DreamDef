@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 2b71617282cb64c0f9a371b5877da12e
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 179865
+  packageName: Elf RTS Building Set - Proto Series
+  packageVersion: 1.2
+  assetPath: Assets/BitGem/RTS_Elves_Buildings/Prefabs/elf_door.prefab
+  uploadId: 407524

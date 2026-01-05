@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 79214e4bfebfd46108e434a4dd9858f7
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 179865
+  packageName: Elf RTS Building Set - Proto Series
+  packageVersion: 1.2
+  assetPath: Assets/BitGem/RTS_Elves_Buildings/Prefabs/elf_barrack_Lv1.prefab
+  uploadId: 407524

@@ -1,0 +1,1101 @@
+fileFormatVersion: 2
+guid: 7a72ef2f25cd14ad39c5286912c4de68
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: Armature.001
+    100002: armature_elf_cauldron_Lv1
+    100004: armature_elf_cauldron_Lv2
+    100006: armature_elf_cauldron_Lv2.001
+    100008: armature_elf_cauldron_Lv3
+    100010: armature_elf_cauldron_Lv3.001
+    100012: armature_elf_cog_big
+    100014: armature_elf_oracle_Lv1
+    100016: armature_elf_oracle_Lv2
+    100018: armature_elf_oracle_Lv3
+    100020: Armiture_Bellow.001
+    100022: armiture_elf_banner_flag
+    100024: armiture_elf_banner_flag.001
+    100026: armiture_elf_banner_flag.002
+    100028: armiture_elf_banner_flag.003
+    100030: armiture_elf_banner_flag.004
+    100032: armiture_elf_barrack_Lv2
+    100034: armiture_elf_barrack_Lv3
+    100036: armiture_elf_elf_door
+    100038: armiture_elf_factory_Lv1
+    100040: armiture_elf_factory_Lv2
+    100042: armiture_elf_factory_Lv3
+    100044: armiture_elf_house_Lv1
+    100046: armiture_elf_house_Lv2
+    100048: armiture_elf_house_Lv3
+    100050: armiture_elf_smithy_Lv2
+    100052: armiture_elf_smithy_Lv3
+    100054: armiture_elf_smithy_Lv3.001
+    100056: armiture_elf_woodcutter_Lv1
+    100058: armiture_elf_woodcutter_Lv2
+    100060: armiture_elf_woodcutter_Lv3
+    100062: base
+    100064: base 1
+    100066: base 2
+    100068: base 3
+    100070: base 4
+    100072: bellow_root
+    100074: bellow_root 1
+    100076: Bone_01
+    100078: Bone_01 1
+    100080: Bone_01 2
+    100082: Bone_01 3
+    100084: Bone_01 4
+    100086: Bone_02
+    100088: Bone_02 1
+    100090: Bone_02 2
+    100092: Bone_02 3
+    100094: Bone_02 4
+    100096: Bone_bellow_upper_part
+    100098: Bone_bellow_upper_part 1
+    100100: Bone_bellow_upper_part 2
+    100102: Bone_bubble_big
+    100104: Bone_bubble_big 1
+    100106: Bone_bubble_big 2
+    100108: Bone_bubble_big 3
+    100110: Bone_bubble_big 4
+    100112: Bone_bubble_mid
+    100114: Bone_bubble_mid 1
+    100116: Bone_bubble_mid 2
+    100118: Bone_bubble_mid 3
+    100120: Bone_bubble_mid 4
+    100122: Bone_bubble_small
+    100124: Bone_bubble_small 1
+    100126: Bone_bubble_small 2
+    100128: Bone_bubble_small 3
+    100130: Bone_bubble_small 4
+    100132: Bone_cauldron
+    100134: Bone_cauldron 1
+    100136: Bone_cauldron 2
+    100138: Bone_cauldron 3
+    100140: Bone_cauldron 4
+    100142: Bone_root
+    100144: bone_root
+    100146: Bone_root 1
+    100148: bone_root 1
+    100150: Bone_root 2
+    100152: bone_root 2
+    100154: Bone_root 3
+    100156: bone_root 3
+    100158: Bone_root 4
+    100160: bone_root 4
+    100162: Bone_root 5
+    100164: Bone_root 6
+    100166: Bone_root 7
+    100168: elf_aim
+    100170: elf_anvil
+    100172: elf_anvil_big
+    100174: elf_asp_mold
+    100176: ELF_banner_flag
+    100178: ELF_banner_flag.001
+    100180: elf_barrack_Lv1
+    100182: elf_barrack_Lv2
+    100184: elf_barrack_Lv3
+    100186: elf_bellow
+    100188: elf_branch_1
+    100190: elf_branch_2
+    100192: elf_building
+    100194: elf_building_small
+    100196: elf_cauldron_Lv1
+    100198: elf_cauldron_Lv2
+    100200: elf_cauldron_Lv2.001
+    100202: elf_cauldron_Lv3
+    100204: elf_cauldron_Lv3.001
+    100206: elf_chimney
+    100208: elf_circle_window
+    100210: elf_cog_big
+    100212: elf_cog_big.001
+    100214: elf_cog_rod
+    100216: elf_cog_small
+    100218: elf_cog_small.001
+    100220: elf_door
+    100222: elf_door_anim
+    100224: elf_factory_Lv1
+    100226: elf_factory_Lv2
+    100228: elf_factory_Lv3
+    100230: elf_foliage_big
+    100232: elf_foliage_mid
+    100234: elf_foliage_small
+    100236: elf_fountain
+    100238: elf_house_Lv1
+    100240: elf_house_Lv2
+    100242: elf_house_Lv3
+    100244: elf_ivy
+    100246: elf_ivy_curly
+    100248: elf_ladder
+    100250: elf_lantern_big
+    100252: elf_lantern_mid
+    100254: elf_lantern_small
+    100256: elf_leaf
+    100258: elf_log_pile
+    100260: elf_mine_enterance
+    100262: elf_mine_Lv1
+    100264: elf_mine_Lv2
+    100266: elf_mine_Lv3
+    100268: elf_mine_rail_piece
+    100270: elf_mine_stone_01
+    100272: elf_mine_stone_02
+    100274: elf_mine_stone_03
+    100276: elf_mine_stone_04
+    100278: elf_mine_stone_05
+    100280: elf_minecart
+    100282: elf_monolith
+    100284: elf_monolith_small
+    100286: elf_oracle_Lv1
+    100288: elf_oracle_Lv2
+    100290: elf_oracle_Lv3
+    100292: elf_outdoor_oven
+    100294: elf_oven
+    100296: elf_practice_dummy
+    100298: elf_rock_big
+    100300: elf_rock_small
+    100302: elf_roof_window
+    100304: //RootNode
+    100306: elf_sap_tap
+    100308: elf_sap_vessel
+    100310: elf_sap_vessel_tap
+    100312: elf_shield
+    100314: elf_smithy_Lv1
+    100316: elf_smithy_Lv2
+    100318: elf_smithy_Lv3
+    100320: elf_stair_corner_conc_shade1
+    100322: elf_stair_corner_conc_shade_2
+    100324: elf_stair_corner_conc_shade_3
+    100326: elf_stair_corner_conc_shade_4
+    100328: elf_stair_corner_conc_shade_5
+    100330: elf_stair_corner_conv_shade1
+    100332: elf_stair_corner_conv_shade_2
+    100334: elf_stair_corner_conv_shade_3
+    100336: elf_stair_corner_conv_shade_4
+    100338: elf_stair_corner_conv_shade_5
+    100340: elf_stairs_half_1_shade_1
+    100342: elf_stairs_half_1_shade_2
+    100344: elf_stairs_half_1_shade_3
+    100346: elf_stairs_half_1_shade_4
+    100348: elf_stairs_half_1_shade_5
+    100350: elf_stairs_half_2_shade_1
+    100352: elf_stairs_half_2_shade_2
+    100354: elf_stairs_half_2_shade_3
+    100356: elf_stairs_half_2_shade_4
+    100358: elf_stairs_half_2_shade_5
+    100360: elf_stairs_shade_1
+    100362: elf_stairs_shade_2
+    100364: elf_stairs_shade_3
+    100366: elf_stairs_shade_4
+    100368: elf_stairs_shade_5
+    100370: elf_stone_base
+    100372: elf_stone_base_high
+    100374: elf_stone_big
+    100376: elf_stone_small
+    100378: elf_stone_wall
+    100380: elf_throne
+    100382: elf_throne_lv1
+    100384: elf_throne_lv2
+    100386: elf_throne_lv3
+    100388: elf_throne_tree
+    100390: elf_throne_tree_small
+    100392: elf_totem_pole_1
+    100394: elf_totem_pole_2
+    100396: elf_totem_pole_3
+    100398: elf_totem_pole_4
+    100400: elf_tower_Lv1
+    100402: elf_tower_Lv2
+    100404: elf_tower_Lv3
+    100406: elf_tree
+    100408: elf_tree_root_1
+    100410: elf_tree_root_2
+    100412: elf_tree_root_3
+    100414: elf_tree_root_4
+    100416: elf_tree_root_5
+    100418: elf_trunk
+    100420: elf_well
+    100422: elf_woodcutter_Lv2
+    100424: elf_woodcutter_Lv3
+    100426: elf_wooden_plank
+    100428: elven_cog_01
+    100430: elven_cog_01 1
+    100432: elven_cog_01 2
+    100434: elven_cog_02
+    100436: elven_cog_02 1
+    100438: elven_cog_03
+    100440: elven_cog_03 1
+    100442: elven_cog_04
+    100444: elven_cog_05
+    100446: elven_door.012
+    100448: elven_door_base
+    100450: elven_door_base 1
+    100452: elven_door_base 10
+    100454: elven_door_base 11
+    100456: elven_door_base 12
+    100458: elven_door_base 2
+    100460: elven_door_base 3
+    100462: elven_door_base 4
+    100464: elven_door_base 5
+    100466: elven_door_base 6
+    100468: elven_door_base 7
+    100470: elven_door_base 8
+    100472: elven_door_base 9
+    100474: elven_door_left
+    100476: elven_door_left 1
+    100478: elven_door_left 10
+    100480: elven_door_left 11
+    100482: elven_door_left 12
+    100484: elven_door_left 13
+    100486: elven_door_left 14
+    100488: elven_door_left 2
+    100490: elven_door_left 3
+    100492: elven_door_left 4
+    100494: elven_door_left 5
+    100496: elven_door_left 6
+    100498: elven_door_left 7
+    100500: elven_door_left 8
+    100502: elven_door_left 9
+    100504: elven_door_right
+    100506: elven_door_right 1
+    100508: elven_door_right 10
+    100510: elven_door_right 11
+    100512: elven_door_right 12
+    100514: elven_door_right 13
+    100516: elven_door_right 14
+    100518: elven_door_right 2
+    100520: elven_door_right 3
+    100522: elven_door_right 4
+    100524: elven_door_right 5
+    100526: elven_door_right 6
+    100528: elven_door_right 7
+    100530: elven_door_right 8
+    100532: elven_door_right 9
+    100534: float_1
+    100536: float_1 1
+    100538: float_1 2
+    100540: float_2
+    100542: float_2 1
+    100544: float_2 2
+    100546: float_3
+    100548: float_3 1
+    100550: float_4
+    100552: float_4 1
+    100554: float_5
+    100556: float_6
+    100558: float_7
+    100560: mine_Lv1_minecart
+    100562: mine_Lv1_minecart_tipping_bucket
+    100564: mine_Lv2_minecart
+    100566: mine_Lv2_minecart_tipping_bucket
+    100568: mine_Lv3_minecart
+    100570: mine_Lv3_minecart_tipping_bucket
+    100572: Plane.006
+    100574: rot
+    100576: rot 1
+    100578: waterfall
+    100580: waterfall 1
+    100582: waterfall 2
+    100584: wave_01
+    100586: wave_01 1
+    100588: wave_01 2
+    100590: wave_02
+    100592: wave_02 1
+    100594: wave_02 2
+    100596: wave_03
+    100598: wave_03 1
+    100600: wave_03 2
+    100602: wave_big
+    100604: wave_big 1
+    100606: wave_big 2
+    100608: wave_rot
+    100610: wave_rot 1
+    100612: wave_rot 2
+    400000: Armature.001
+    400002: armature_elf_cauldron_Lv1
+    400004: armature_elf_cauldron_Lv2
+    400006: armature_elf_cauldron_Lv2.001
+    400008: armature_elf_cauldron_Lv3
+    400010: armature_elf_cauldron_Lv3.001
+    400012: armature_elf_cog_big
+    400014: armature_elf_oracle_Lv1
+    400016: armature_elf_oracle_Lv2
+    400018: armature_elf_oracle_Lv3
+    400020: Armiture_Bellow.001
+    400022: armiture_elf_banner_flag
+    400024: armiture_elf_banner_flag.001
+    400026: armiture_elf_banner_flag.002
+    400028: armiture_elf_banner_flag.003
+    400030: armiture_elf_banner_flag.004
+    400032: armiture_elf_barrack_Lv2
+    400034: armiture_elf_barrack_Lv3
+    400036: armiture_elf_elf_door
+    400038: armiture_elf_factory_Lv1
+    400040: armiture_elf_factory_Lv2
+    400042: armiture_elf_factory_Lv3
+    400044: armiture_elf_house_Lv1
+    400046: armiture_elf_house_Lv2
+    400048: armiture_elf_house_Lv3
+    400050: armiture_elf_smithy_Lv2
+    400052: armiture_elf_smithy_Lv3
+    400054: armiture_elf_smithy_Lv3.001
+    400056: armiture_elf_woodcutter_Lv1
+    400058: armiture_elf_woodcutter_Lv2
+    400060: armiture_elf_woodcutter_Lv3
+    400062: base
+    400064: base 1
+    400066: base 2
+    400068: base 3
+    400070: base 4
+    400072: bellow_root
+    400074: bellow_root 1
+    400076: Bone_01
+    400078: Bone_01 1
+    400080: Bone_01 2
+    400082: Bone_01 3
+    400084: Bone_01 4
+    400086: Bone_02
+    400088: Bone_02 1
+    400090: Bone_02 2
+    400092: Bone_02 3
+    400094: Bone_02 4
+    400096: Bone_bellow_upper_part
+    400098: Bone_bellow_upper_part 1
+    400100: Bone_bellow_upper_part 2
+    400102: Bone_bubble_big
+    400104: Bone_bubble_big 1
+    400106: Bone_bubble_big 2
+    400108: Bone_bubble_big 3
+    400110: Bone_bubble_big 4
+    400112: Bone_bubble_mid
+    400114: Bone_bubble_mid 1
+    400116: Bone_bubble_mid 2
+    400118: Bone_bubble_mid 3
+    400120: Bone_bubble_mid 4
+    400122: Bone_bubble_small
+    400124: Bone_bubble_small 1
+    400126: Bone_bubble_small 2
+    400128: Bone_bubble_small 3
+    400130: Bone_bubble_small 4
+    400132: Bone_cauldron
+    400134: Bone_cauldron 1
+    400136: Bone_cauldron 2
+    400138: Bone_cauldron 3
+    400140: Bone_cauldron 4
+    400142: Bone_root
+    400144: bone_root
+    400146: Bone_root 1
+    400148: bone_root 1
+    400150: Bone_root 2
+    400152: bone_root 2
+    400154: Bone_root 3
+    400156: bone_root 3
+    400158: Bone_root 4
+    400160: bone_root 4
+    400162: Bone_root 5
+    400164: Bone_root 6
+    400166: Bone_root 7
+    400168: elf_aim
+    400170: elf_anvil
+    400172: elf_anvil_big
+    400174: elf_asp_mold
+    400176: ELF_banner_flag
+    400178: ELF_banner_flag.001
+    400180: elf_barrack_Lv1
+    400182: elf_barrack_Lv2
+    400184: elf_barrack_Lv3
+    400186: elf_bellow
+    400188: elf_branch_1
+    400190: elf_branch_2
+    400192: elf_building
+    400194: elf_building_small
+    400196: elf_cauldron_Lv1
+    400198: elf_cauldron_Lv2
+    400200: elf_cauldron_Lv2.001
+    400202: elf_cauldron_Lv3
+    400204: elf_cauldron_Lv3.001
+    400206: elf_chimney
+    400208: elf_circle_window
+    400210: elf_cog_big
+    400212: elf_cog_big.001
+    400214: elf_cog_rod
+    400216: elf_cog_small
+    400218: elf_cog_small.001
+    400220: elf_door
+    400222: elf_door_anim
+    400224: elf_factory_Lv1
+    400226: elf_factory_Lv2
+    400228: elf_factory_Lv3
+    400230: elf_foliage_big
+    400232: elf_foliage_mid
+    400234: elf_foliage_small
+    400236: elf_fountain
+    400238: elf_house_Lv1
+    400240: elf_house_Lv2
+    400242: elf_house_Lv3
+    400244: elf_ivy
+    400246: elf_ivy_curly
+    400248: elf_ladder
+    400250: elf_lantern_big
+    400252: elf_lantern_mid
+    400254: elf_lantern_small
+    400256: elf_leaf
+    400258: elf_log_pile
+    400260: elf_mine_enterance
+    400262: elf_mine_Lv1
+    400264: elf_mine_Lv2
+    400266: elf_mine_Lv3
+    400268: elf_mine_rail_piece
+    400270: elf_mine_stone_01
+    400272: elf_mine_stone_02
+    400274: elf_mine_stone_03
+    400276: elf_mine_stone_04
+    400278: elf_mine_stone_05
+    400280: elf_minecart
+    400282: elf_monolith
+    400284: elf_monolith_small
+    400286: elf_oracle_Lv1
+    400288: elf_oracle_Lv2
+    400290: elf_oracle_Lv3
+    400292: elf_outdoor_oven
+    400294: elf_oven
+    400296: elf_practice_dummy
+    400298: elf_rock_big
+    400300: elf_rock_small
+    400302: elf_roof_window
+    400304: //RootNode
+    400306: elf_sap_tap
+    400308: elf_sap_vessel
+    400310: elf_sap_vessel_tap
+    400312: elf_shield
+    400314: elf_smithy_Lv1
+    400316: elf_smithy_Lv2
+    400318: elf_smithy_Lv3
+    400320: elf_stair_corner_conc_shade1
+    400322: elf_stair_corner_conc_shade_2
+    400324: elf_stair_corner_conc_shade_3
+    400326: elf_stair_corner_conc_shade_4
+    400328: elf_stair_corner_conc_shade_5
+    400330: elf_stair_corner_conv_shade1
+    400332: elf_stair_corner_conv_shade_2
+    400334: elf_stair_corner_conv_shade_3
+    400336: elf_stair_corner_conv_shade_4
+    400338: elf_stair_corner_conv_shade_5
+    400340: elf_stairs_half_1_shade_1
+    400342: elf_stairs_half_1_shade_2
+    400344: elf_stairs_half_1_shade_3
+    400346: elf_stairs_half_1_shade_4
+    400348: elf_stairs_half_1_shade_5
+    400350: elf_stairs_half_2_shade_1
+    400352: elf_stairs_half_2_shade_2
+    400354: elf_stairs_half_2_shade_3
+    400356: elf_stairs_half_2_shade_4
+    400358: elf_stairs_half_2_shade_5
+    400360: elf_stairs_shade_1
+    400362: elf_stairs_shade_2
+    400364: elf_stairs_shade_3
+    400366: elf_stairs_shade_4
+    400368: elf_stairs_shade_5
+    400370: elf_stone_base
+    400372: elf_stone_base_high
+    400374: elf_stone_big
+    400376: elf_stone_small
+    400378: elf_stone_wall
+    400380: elf_throne
+    400382: elf_throne_lv1
+    400384: elf_throne_lv2
+    400386: elf_throne_lv3
+    400388: elf_throne_tree
+    400390: elf_throne_tree_small
+    400392: elf_totem_pole_1
+    400394: elf_totem_pole_2
+    400396: elf_totem_pole_3
+    400398: elf_totem_pole_4
+    400400: elf_tower_Lv1
+    400402: elf_tower_Lv2
+    400404: elf_tower_Lv3
+    400406: elf_tree
+    400408: elf_tree_root_1
+    400410: elf_tree_root_2
+    400412: elf_tree_root_3
+    400414: elf_tree_root_4
+    400416: elf_tree_root_5
+    400418: elf_trunk
+    400420: elf_well
+    400422: elf_woodcutter_Lv2
+    400424: elf_woodcutter_Lv3
+    400426: elf_wooden_plank
+    400428: elven_cog_01
+    400430: elven_cog_01 1
+    400432: elven_cog_01 2
+    400434: elven_cog_02
+    400436: elven_cog_02 1
+    400438: elven_cog_03
+    400440: elven_cog_03 1
+    400442: elven_cog_04
+    400444: elven_cog_05
+    400446: elven_door.012
+    400448: elven_door_base
+    400450: elven_door_base 1
+    400452: elven_door_base 10
+    400454: elven_door_base 11
+    400456: elven_door_base 12
+    400458: elven_door_base 2
+    400460: elven_door_base 3
+    400462: elven_door_base 4
+    400464: elven_door_base 5
+    400466: elven_door_base 6
+    400468: elven_door_base 7
+    400470: elven_door_base 8
+    400472: elven_door_base 9
+    400474: elven_door_left
+    400476: elven_door_left 1
+    400478: elven_door_left 10
+    400480: elven_door_left 11
+    400482: elven_door_left 12
+    400484: elven_door_left 13
+    400486: elven_door_left 14
+    400488: elven_door_left 2
+    400490: elven_door_left 3
+    400492: elven_door_left 4
+    400494: elven_door_left 5
+    400496: elven_door_left 6
+    400498: elven_door_left 7
+    400500: elven_door_left 8
+    400502: elven_door_left 9
+    400504: elven_door_right
+    400506: elven_door_right 1
+    400508: elven_door_right 10
+    400510: elven_door_right 11
+    400512: elven_door_right 12
+    400514: elven_door_right 13
+    400516: elven_door_right 14
+    400518: elven_door_right 2
+    400520: elven_door_right 3
+    400522: elven_door_right 4
+    400524: elven_door_right 5
+    400526: elven_door_right 6
+    400528: elven_door_right 7
+    400530: elven_door_right 8
+    400532: elven_door_right 9
+    400534: float_1
+    400536: float_1 1
+    400538: float_1 2
+    400540: float_2
+    400542: float_2 1
+    400544: float_2 2
+    400546: float_3
+    400548: float_3 1
+    400550: float_4
+    400552: float_4 1
+    400554: float_5
+    400556: float_6
+    400558: float_7
+    400560: mine_Lv1_minecart
+    400562: mine_Lv1_minecart_tipping_bucket
+    400564: mine_Lv2_minecart
+    400566: mine_Lv2_minecart_tipping_bucket
+    400568: mine_Lv3_minecart
+    400570: mine_Lv3_minecart_tipping_bucket
+    400572: Plane.006
+    400574: rot
+    400576: rot 1
+    400578: waterfall
+    400580: waterfall 1
+    400582: waterfall 2
+    400584: wave_01
+    400586: wave_01 1
+    400588: wave_01 2
+    400590: wave_02
+    400592: wave_02 1
+    400594: wave_02 2
+    400596: wave_03
+    400598: wave_03 1
+    400600: wave_03 2
+    400602: wave_big
+    400604: wave_big 1
+    400606: wave_big 2
+    400608: wave_rot
+    400610: wave_rot 1
+    400612: wave_rot 2
+    2100000: proto_elf_rts
+    2300000: elf_aim
+    2300002: elf_anvil
+    2300004: elf_anvil_big
+    2300006: elf_asp_mold
+    2300008: elf_barrack_Lv1
+    2300010: elf_bellow
+    2300012: elf_branch_1
+    2300014: elf_branch_2
+    2300016: elf_building
+    2300018: elf_building_small
+    2300020: elf_chimney
+    2300022: elf_circle_window
+    2300024: elf_cog_big
+    2300026: elf_cog_rod
+    2300028: elf_cog_small
+    2300030: elf_door
+    2300032: elf_foliage_big
+    2300034: elf_foliage_mid
+    2300036: elf_foliage_small
+    2300038: elf_fountain
+    2300040: elf_ivy
+    2300042: elf_ivy_curly
+    2300044: elf_ladder
+    2300046: elf_lantern_big
+    2300048: elf_lantern_mid
+    2300050: elf_lantern_small
+    2300052: elf_leaf
+    2300054: elf_log_pile
+    2300056: elf_mine_enterance
+    2300058: elf_mine_Lv1
+    2300060: elf_mine_Lv2
+    2300062: elf_mine_Lv3
+    2300064: elf_mine_rail_piece
+    2300066: elf_mine_stone_01
+    2300068: elf_mine_stone_02
+    2300070: elf_mine_stone_03
+    2300072: elf_mine_stone_04
+    2300074: elf_mine_stone_05
+    2300076: elf_minecart
+    2300078: elf_monolith
+    2300080: elf_monolith_small
+    2300082: elf_outdoor_oven
+    2300084: elf_oven
+    2300086: elf_practice_dummy
+    2300088: elf_rock_big
+    2300090: elf_rock_small
+    2300092: elf_roof_window
+    2300094: elf_sap_tap
+    2300096: elf_sap_vessel
+    2300098: elf_sap_vessel_tap
+    2300100: elf_shield
+    2300102: elf_stair_corner_conc_shade1
+    2300104: elf_stair_corner_conc_shade_2
+    2300106: elf_stair_corner_conc_shade_3
+    2300108: elf_stair_corner_conc_shade_4
+    2300110: elf_stair_corner_conc_shade_5
+    2300112: elf_stair_corner_conv_shade1
+    2300114: elf_stair_corner_conv_shade_2
+    2300116: elf_stair_corner_conv_shade_3
+    2300118: elf_stair_corner_conv_shade_4
+    2300120: elf_stair_corner_conv_shade_5
+    2300122: elf_stairs_half_1_shade_1
+    2300124: elf_stairs_half_1_shade_2
+    2300126: elf_stairs_half_1_shade_3
+    2300128: elf_stairs_half_1_shade_4
+    2300130: elf_stairs_half_1_shade_5
+    2300132: elf_stairs_half_2_shade_1
+    2300134: elf_stairs_half_2_shade_2
+    2300136: elf_stairs_half_2_shade_3
+    2300138: elf_stairs_half_2_shade_4
+    2300140: elf_stairs_half_2_shade_5
+    2300142: elf_stairs_shade_1
+    2300144: elf_stairs_shade_2
+    2300146: elf_stairs_shade_3
+    2300148: elf_stairs_shade_4
+    2300150: elf_stairs_shade_5
+    2300152: elf_stone_base
+    2300154: elf_stone_base_high
+    2300156: elf_stone_big
+    2300158: elf_stone_small
+    2300160: elf_stone_wall
+    2300162: elf_throne
+    2300164: elf_throne_tree
+    2300166: elf_throne_tree_small
+    2300168: elf_totem_pole_1
+    2300170: elf_totem_pole_2
+    2300172: elf_totem_pole_3
+    2300174: elf_totem_pole_4
+    2300176: elf_tower_Lv1
+    2300178: elf_tower_Lv2
+    2300180: elf_tower_Lv3
+    2300182: elf_tree
+    2300184: elf_tree_root_1
+    2300186: elf_tree_root_2
+    2300188: elf_tree_root_3
+    2300190: elf_tree_root_4
+    2300192: elf_tree_root_5
+    2300194: elf_trunk
+    2300196: elf_well
+    2300198: elf_wooden_plank
+    2300200: mine_Lv1_minecart
+    2300202: mine_Lv1_minecart_tipping_bucket
+    2300204: mine_Lv2_minecart
+    2300206: mine_Lv2_minecart_tipping_bucket
+    2300208: mine_Lv3_minecart
+    2300210: mine_Lv3_minecart_tipping_bucket
+    3300000: elf_aim
+    3300002: elf_anvil
+    3300004: elf_anvil_big
+    3300006: elf_asp_mold
+    3300008: elf_barrack_Lv1
+    3300010: elf_bellow
+    3300012: elf_branch_1
+    3300014: elf_branch_2
+    3300016: elf_building
+    3300018: elf_building_small
+    3300020: elf_chimney
+    3300022: elf_circle_window
+    3300024: elf_cog_big
+    3300026: elf_cog_rod
+    3300028: elf_cog_small
+    3300030: elf_door
+    3300032: elf_foliage_big
+    3300034: elf_foliage_mid
+    3300036: elf_foliage_small
+    3300038: elf_fountain
+    3300040: elf_ivy
+    3300042: elf_ivy_curly
+    3300044: elf_ladder
+    3300046: elf_lantern_big
+    3300048: elf_lantern_mid
+    3300050: elf_lantern_small
+    3300052: elf_leaf
+    3300054: elf_log_pile
+    3300056: elf_mine_enterance
+    3300058: elf_mine_Lv1
+    3300060: elf_mine_Lv2
+    3300062: elf_mine_Lv3
+    3300064: elf_mine_rail_piece
+    3300066: elf_mine_stone_01
+    3300068: elf_mine_stone_02
+    3300070: elf_mine_stone_03
+    3300072: elf_mine_stone_04
+    3300074: elf_mine_stone_05
+    3300076: elf_minecart
+    3300078: elf_monolith
+    3300080: elf_monolith_small
+    3300082: elf_outdoor_oven
+    3300084: elf_oven
+    3300086: elf_practice_dummy
+    3300088: elf_rock_big
+    3300090: elf_rock_small
+    3300092: elf_roof_window
+    3300094: elf_sap_tap
+    3300096: elf_sap_vessel
+    3300098: elf_sap_vessel_tap
+    3300100: elf_shield
+    3300102: elf_stair_corner_conc_shade1
+    3300104: elf_stair_corner_conc_shade_2
+    3300106: elf_stair_corner_conc_shade_3
+    3300108: elf_stair_corner_conc_shade_4
+    3300110: elf_stair_corner_conc_shade_5
+    3300112: elf_stair_corner_conv_shade1
+    3300114: elf_stair_corner_conv_shade_2
+    3300116: elf_stair_corner_conv_shade_3
+    3300118: elf_stair_corner_conv_shade_4
+    3300120: elf_stair_corner_conv_shade_5
+    3300122: elf_stairs_half_1_shade_1
+    3300124: elf_stairs_half_1_shade_2
+    3300126: elf_stairs_half_1_shade_3
+    3300128: elf_stairs_half_1_shade_4
+    3300130: elf_stairs_half_1_shade_5
+    3300132: elf_stairs_half_2_shade_1
+    3300134: elf_stairs_half_2_shade_2
+    3300136: elf_stairs_half_2_shade_3
+    3300138: elf_stairs_half_2_shade_4
+    3300140: elf_stairs_half_2_shade_5
+    3300142: elf_stairs_shade_1
+    3300144: elf_stairs_shade_2
+    3300146: elf_stairs_shade_3
+    3300148: elf_stairs_shade_4
+    3300150: elf_stairs_shade_5
+    3300152: elf_stone_base
+    3300154: elf_stone_base_high
+    3300156: elf_stone_big
+    3300158: elf_stone_small
+    3300160: elf_stone_wall
+    3300162: elf_throne
+    3300164: elf_throne_tree
+    3300166: elf_throne_tree_small
+    3300168: elf_totem_pole_1
+    3300170: elf_totem_pole_2
+    3300172: elf_totem_pole_3
+    3300174: elf_totem_pole_4
+    3300176: elf_tower_Lv1
+    3300178: elf_tower_Lv2
+    3300180: elf_tower_Lv3
+    3300182: elf_tree
+    3300184: elf_tree_root_1
+    3300186: elf_tree_root_2
+    3300188: elf_tree_root_3
+    3300190: elf_tree_root_4
+    3300192: elf_tree_root_5
+    3300194: elf_trunk
+    3300196: elf_well
+    3300198: elf_wooden_plank
+    3300200: mine_Lv1_minecart
+    3300202: mine_Lv1_minecart_tipping_bucket
+    3300204: mine_Lv2_minecart
+    3300206: mine_Lv2_minecart_tipping_bucket
+    3300208: mine_Lv3_minecart
+    3300210: mine_Lv3_minecart_tipping_bucket
+    4300000: elf_aim
+    4300002: elf_anvil
+    4300004: elf_anvil_big
+    4300006: elf_asp_mold
+    4300008: elf_bellow
+    4300010: elf_branch_1
+    4300012: elf_branch_2
+    4300014: elf_building
+    4300016: elf_building_small
+    4300018: elf_chimney
+    4300020: elf_circle_window
+    4300022: elf_cog_big
+    4300024: elf_cog_rod
+    4300026: elf_cog_small
+    4300028: elf_door
+    4300030: elf_foliage_big
+    4300032: elf_foliage_mid
+    4300034: elf_foliage_small
+    4300036: elf_fountain
+    4300038: elf_ivy
+    4300040: elf_ivy_curly
+    4300042: elf_ladder
+    4300044: elf_lantern_big
+    4300046: elf_lantern_mid
+    4300048: elf_lantern_small
+    4300050: elf_leaf
+    4300052: elf_log_pile
+    4300054: elf_mine_rail_piece
+    4300056: elf_mine_stone_01
+    4300058: elf_mine_stone_02
+    4300060: elf_mine_stone_03
+    4300062: elf_mine_stone_04
+    4300064: elf_mine_stone_05
+    4300066: elf_minecart
+    4300068: elf_monolith
+    4300070: elf_monolith_small
+    4300072: elf_outdoor_oven
+    4300074: elf_oven
+    4300076: elf_practice_dummy
+    4300078: elf_rock_big
+    4300080: elf_rock_small
+    4300082: elf_roof_window
+    4300084: elf_sap_tap
+    4300086: elf_sap_vessel
+    4300088: elf_sap_vessel_tap
+    4300090: elf_shield
+    4300092: elf_stair_corner_conc_shade1
+    4300094: elf_stair_corner_conc_shade_2
+    4300096: elf_stair_corner_conc_shade_3
+    4300098: elf_stair_corner_conc_shade_4
+    4300100: elf_stair_corner_conc_shade_5
+    4300102: elf_stair_corner_conv_shade1
+    4300104: elf_stair_corner_conv_shade_2
+    4300106: elf_stair_corner_conv_shade_3
+    4300108: elf_stair_corner_conv_shade_4
+    4300110: elf_stair_corner_conv_shade_5
+    4300112: elf_stairs_half_1_shade_1
+    4300114: elf_stairs_half_1_shade_2
+    4300116: elf_stairs_half_1_shade_3
+    4300118: elf_stairs_half_1_shade_4
+    4300120: elf_stairs_half_1_shade_5
+    4300122: elf_stairs_half_2_shade_1
+    4300124: elf_stairs_half_2_shade_2
+    4300126: elf_stairs_half_2_shade_3
+    4300128: elf_stairs_half_2_shade_4
+    4300130: elf_stairs_half_2_shade_5
+    4300132: elf_stairs_shade_1
+    4300134: elf_stairs_shade_2
+    4300136: elf_stairs_shade_3
+    4300138: elf_stairs_shade_4
+    4300140: elf_stairs_shade_5
+    4300142: elf_stone_base
+    4300144: elf_stone_base_high
+    4300146: elf_stone_big
+    4300148: elf_stone_small
+    4300150: elf_stone_wall
+    4300152: elf_throne
+    4300154: elf_throne_tree
+    4300156: elf_throne_tree_small
+    4300158: elf_totem_pole_1
+    4300160: elf_totem_pole_2
+    4300162: elf_totem_pole_3
+    4300164: elf_totem_pole_4
+    4300166: elf_tree
+    4300168: elf_tree_root_1
+    4300170: elf_tree_root_2
+    4300172: elf_tree_root_3
+    4300174: elf_tree_root_4
+    4300176: elf_tree_root_5
+    4300178: elf_trunk
+    4300180: elf_well
+    4300182: elf_wooden_plank
+    4300184: elf_mine_enterance
+    4300186: ELF_banner_flag.001
+    4300188: elf_cauldron_Lv2.001
+    4300190: elf_cauldron_Lv3.001
+    4300192: elf_cog_big.001
+    4300194: elf_cog_small.001
+    4300196: elf_door_anim
+    4300198: Plane.006
+    4300200: armiture_elf_woodcutter_Lv1
+    4300202: elf_barrack_Lv1
+    4300204: elf_barrack_Lv2
+    4300206: elf_barrack_Lv3
+    4300208: elf_cauldron_Lv1
+    4300210: elf_cauldron_Lv2
+    4300212: elf_cauldron_Lv3
+    4300214: elf_factory_Lv1
+    4300216: elf_factory_Lv2
+    4300218: elf_factory_Lv3
+    4300220: elf_house_Lv1
+    4300222: elf_house_Lv2
+    4300224: elf_house_Lv3
+    4300226: elf_mine_Lv1
+    4300228: mine_Lv1_minecart
+    4300230: mine_Lv1_minecart_tipping_bucket
+    4300232: elf_mine_Lv2
+    4300234: mine_Lv2_minecart
+    4300236: mine_Lv2_minecart_tipping_bucket
+    4300238: elf_mine_Lv3
+    4300240: mine_Lv3_minecart
+    4300242: mine_Lv3_minecart_tipping_bucket
+    4300244: elf_oracle_Lv1
+    4300246: elf_oracle_Lv2
+    4300248: elf_oracle_Lv3
+    4300250: elf_smithy_Lv1
+    4300252: elf_smithy_Lv2
+    4300254: elf_smithy_Lv3
+    4300256: elf_tower_Lv1
+    4300258: elf_tower_Lv2
+    4300260: elf_tower_Lv3
+    4300262: elf_woodcutter_Lv2
+    4300264: elf_woodcutter_Lv3
+    4300266: ELF_banner_flag
+    4300268: elf_throne_lv1
+    4300270: elf_throne_lv2
+    4300272: elf_throne_lv3
+    7400000: Scene
+    9500000: //RootNode
+    13700000: armiture_elf_woodcutter_Lv1
+    13700002: ELF_banner_flag
+    13700004: ELF_banner_flag.001
+    13700006: elf_barrack_Lv2
+    13700008: elf_barrack_Lv3
+    13700010: elf_cauldron_Lv1
+    13700012: elf_cauldron_Lv2
+    13700014: elf_cauldron_Lv2.001
+    13700016: elf_cauldron_Lv3
+    13700018: elf_cauldron_Lv3.001
+    13700020: elf_cog_big.001
+    13700022: elf_cog_small.001
+    13700024: elf_door_anim
+    13700026: elf_factory_Lv1
+    13700028: elf_factory_Lv2
+    13700030: elf_factory_Lv3
+    13700032: elf_house_Lv1
+    13700034: elf_house_Lv2
+    13700036: elf_house_Lv3
+    13700038: elf_oracle_Lv1
+    13700040: elf_oracle_Lv2
+    13700042: elf_oracle_Lv3
+    13700044: elf_smithy_Lv1
+    13700046: elf_smithy_Lv2
+    13700048: elf_smithy_Lv3
+    13700050: elf_throne_lv1
+    13700052: elf_throne_lv2
+    13700054: elf_throne_lv3
+    13700056: elf_woodcutter_Lv2
+    13700058: elf_woodcutter_Lv3
+    13700060: Plane.006
+    2186277476908879412: ImportLogs
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: proto_elf_rts
+    second: {fileID: 2100000, guid: 2ce7403c753ad4f0f9324441238c2ed6, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 1
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 179865
+  packageName: Elf RTS Building Set - Proto Series
+  packageVersion: 1.2
+  assetPath: Assets/BitGem/RTS_Elves_Buildings/Source/elf_sample_scene.fbx
+  uploadId: 407524

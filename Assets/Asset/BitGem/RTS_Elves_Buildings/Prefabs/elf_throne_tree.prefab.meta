@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: ecdd80828af65401b9bfbc3582a7555b
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 179865
+  packageName: Elf RTS Building Set - Proto Series
+  packageVersion: 1.2
+  assetPath: Assets/BitGem/RTS_Elves_Buildings/Prefabs/elf_throne_tree.prefab
+  uploadId: 407524

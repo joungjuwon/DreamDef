@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 868c9fe9f00e9a641b13a715a3846733
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 163143
+  packageName: Orc RTS Building Set - Proto Series
+  packageVersion: 1.0
+  assetPath: Assets/Bitgem/RTS Orc Building - Proto Series/Animations/orc_tower_Lv3.controller
+  uploadId: 353283

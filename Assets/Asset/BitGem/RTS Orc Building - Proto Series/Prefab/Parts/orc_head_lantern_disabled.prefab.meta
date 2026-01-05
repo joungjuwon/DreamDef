@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 962eb74fbe5b3c542abb4ee86206f36c
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 163143
+  packageName: Orc RTS Building Set - Proto Series
+  packageVersion: 1.0
+  assetPath: Assets/Bitgem/RTS Orc Building - Proto Series/Prefab/Parts/orc_head_lantern_disabled.prefab
+  uploadId: 353283

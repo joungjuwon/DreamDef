@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: ba54a4ba46ab84b66a9da32f1b994dd3
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 179865
+  packageName: Elf RTS Building Set - Proto Series
+  packageVersion: 1.2
+  assetPath: Assets/BitGem/RTS_Elves_Buildings/Prefabs/elf_mine_stone_02.prefab
+  uploadId: 407524

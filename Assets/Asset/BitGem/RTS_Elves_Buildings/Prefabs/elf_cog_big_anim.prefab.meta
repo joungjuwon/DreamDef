@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: c90db2115c93c4669bc8f654ebf55e3a
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 179865
+  packageName: Elf RTS Building Set - Proto Series
+  packageVersion: 1.2
+  assetPath: Assets/BitGem/RTS_Elves_Buildings/Prefabs/elf_cog_big_anim.prefab
+  uploadId: 407524

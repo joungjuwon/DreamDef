@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 0a473549651ef4d469eda180f1196cdf
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 179865
+  packageName: Elf RTS Building Set - Proto Series
+  packageVersion: 1.2
+  assetPath: Assets/BitGem/RTS_Elves_Buildings/Animations/house_Lv2.controller
+  uploadId: 407524

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 283901a4b41a14eefa977ee2a6f8907e
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 179865
+  packageName: Elf RTS Building Set - Proto Series
+  packageVersion: 1.2
+  assetPath: Assets/BitGem/RTS_Elves_Buildings/Prefabs/elf_ivy_curly.prefab
+  uploadId: 407524

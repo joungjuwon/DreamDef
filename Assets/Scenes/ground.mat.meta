@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 8db432f9074a94548a15084ad43b5750
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 179865
+  packageName: Elf RTS Building Set - Proto Series
+  packageVersion: 1.2
+  assetPath: Assets/Scenes/ground.mat
+  uploadId: 407524

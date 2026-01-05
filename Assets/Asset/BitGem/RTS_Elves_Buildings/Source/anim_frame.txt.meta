@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: fb3b2edac91914f65a25f4ba85107de3
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 179865
+  packageName: Elf RTS Building Set - Proto Series
+  packageVersion: 1.2
+  assetPath: Assets/BitGem/RTS_Elves_Buildings/Source/anim_frame.txt
+  uploadId: 407524
