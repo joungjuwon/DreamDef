@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class ResourceBuilding : MonoBehaviour
+public class ResourceBuilding : Building
 {
     // 모든 자원 건물을 추적하는 static 리스트
     public static List<ResourceBuilding> AllBuildings = new List<ResourceBuilding>();

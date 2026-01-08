@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class UnitProductionBuilding : MonoBehaviour
+public class UnitProductionBuilding : Building
 {
     [Header("Production Settings")]
     public GameObject unitPrefab; // 생성할 유닛 프리팹 (PlayerUnit 컴포넌트 필요)
@@ -19,8 +19,10 @@ public class UnitProductionBuilding : MonoBehaviour
     private Queue<int> _availableSlots = new Queue<int>();
     private bool _isRespawning = false;
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
+
         // 사용 가능한 슬롯 초기화
         for (int i = 0; i < maxUnitCount; i++)
         {

@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 public class EnemyUnit : RTSUnit, IDamageable
 {
@@ -15,6 +16,14 @@ public class EnemyUnit : RTSUnit, IDamageable
     public GameObject projectilePrefab;
     public Transform projectileSpawnPoint;
     public LayerMask targetLayer;
+
+    [Header("AI Settings")]
+    public List<string> priorityTags = new List<string>();
+
+    [Header("Health Bar")]
+    [SerializeField] private HealthBarController healthBarPrefab;
+    [SerializeField] private Transform healthBarAttachPoint;
+    private HealthBarController healthBarInstance;
 
     private float _currentHealth;
     private float _lastAttackTime;
@@ -92,34 +101,76 @@ public class EnemyUnit : RTSUnit, IDamageable
     private void DetectEnemies()
     {
         Collider[] hits = Physics.OverlapSphere(transform.position, detectionRange, targetLayer);
-        IDamageable closestUnit = null;
-        float closestDistance = float.MaxValue;
+        IDamageable bestTarget = null;
 
         foreach (var hit in hits)
         {
-            IDamageable unit = hit.GetComponent<IDamageable>();
-            if (unit != null && unit != (IDamageable)this)
+            IDamageable candidate = hit.GetComponent<IDamageable>();
+            if (candidate != null && candidate != (IDamageable)this)
             {
-                float distance = Vector3.Distance(transform.position, unit.transform.position);
-                if (distance < closestDistance)
+                if (bestTarget == null)
                 {
-                    closestDistance = distance;
-                    closestUnit = unit;
+                    bestTarget = candidate;
+                }
+                else if (IsBetterTarget(candidate, bestTarget))
+                {
+                    bestTarget = candidate;
                 }
             }
         }
 
-        if (closestUnit != null)
+        if (bestTarget != null)
         {
-            _targetUnit = closestUnit;
+            _targetUnit = bestTarget;
         }
+    }
+
+    private bool IsBetterTarget(IDamageable newTarget, IDamageable currentTarget)
+    {
+        GameObject newObj = newTarget.transform.gameObject;
+        GameObject currentObj = currentTarget.transform.gameObject;
+
+        // 1. 우선순위 태그 확인 (인덱스가 낮을수록 높은 우선순위)
+        int newPriority = priorityTags.IndexOf(newObj.tag);
+        int currentPriority = priorityTags.IndexOf(currentObj.tag);
+
+        if (newPriority != -1 && currentPriority != -1)
+        {
+            if (newPriority != currentPriority) return newPriority < currentPriority;
+        }
+        else if (newPriority != -1) return true;
+        else if (currentPriority != -1) return false;
+
+        // 2. 베이스 공격 후순위 처리 (태그가 "Base"인 경우 우선순위 낮음)
+        bool newIsBase = newObj.CompareTag("Base");
+        bool currentIsBase = currentObj.CompareTag("Base");
+
+        if (newIsBase != currentIsBase) return !newIsBase; // 새 타겟이 베이스가 아니면 더 좋음
+
+        // 3. 거리 비교 (가까운 대상 우선)
+        float newDist = (transform.position - newTarget.transform.position).sqrMagnitude;
+        float currentDist = (transform.position - currentTarget.transform.position).sqrMagnitude;
+
+        return newDist < currentDist;
     }
 
     public void TakeDamage(float amount)
     {
         if (_isDead) return;
 
+        // 데미지를 처음 받으면 체력바를 생성하고 활성화합니다.
+        if (healthBarInstance == null && healthBarPrefab != null)
+        {
+            Transform parent = healthBarAttachPoint != null ? healthBarAttachPoint : transform;
+            healthBarInstance = Instantiate(healthBarPrefab, parent);
+            healthBarInstance.gameObject.SetActive(true);
+        }
+
         _currentHealth -= amount;
+
+        // 체력바 UI를 업데이트합니다.
+        healthBarInstance?.UpdateHealth(_currentHealth, maxHealth);
+
         if (_currentHealth <= 0) Die();
     }
 

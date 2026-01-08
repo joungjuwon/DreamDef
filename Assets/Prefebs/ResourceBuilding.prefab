@@ -156,4 +156,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79cce9ff7e089544e83608b1e9f42f27, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ResourceBuilding
+  maxHealth: 500
+  healthBarPrefab: {fileID: 1563760308068517248, guid: d07d5779a313b0e48962705bea5febc1, type: 3}
+  healthBarAttachPoint: {fileID: 0}
   resourcesPerWave: 10

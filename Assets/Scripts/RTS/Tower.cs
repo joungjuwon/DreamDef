@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class Tower : MonoBehaviour
+public class Tower : Building
 {
     [Header("Tower Stats")]
     public float attackRange = 15f;

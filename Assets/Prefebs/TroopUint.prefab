@@ -215,6 +215,8 @@ MonoBehaviour:
   targetLayer:
     serializedVersion: 2
     m_Bits: 128
+  healthBarPrefab: {fileID: 1563760308068517248, guid: d07d5779a313b0e48962705bea5febc1, type: 3}
+  healthBarAttachPoint: {fileID: 0}
 --- !u!1 &4396562278451216814
 GameObject:
   m_ObjectHideFlags: 0

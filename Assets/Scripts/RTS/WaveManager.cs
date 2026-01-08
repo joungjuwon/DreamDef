@@ -38,6 +38,21 @@ public class WaveManager : MonoBehaviour
         {
             waveText.gameObject.SetActive(false);
         }
+        BaseBuilding.OnBaseDestroyed += OnGameOver;
+    }
+
+    private void OnDestroy()
+    {
+        BaseBuilding.OnBaseDestroyed -= OnGameOver;
+    }
+
+    private void OnGameOver()
+    {
+        if (waveText != null)
+        {
+            waveText.text = "GAME OVER";
+            waveText.gameObject.SetActive(true);
+        }
     }
 
     // PlayerInput 컴포넌트가 "SendMessages" 방식으로 호출하는 함수입니다.

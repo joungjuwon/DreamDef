@@ -21,6 +21,11 @@ public class PlayerUnit : RTSUnit, ISelectable, IDamageable
     public Transform projectileSpawnPoint; // 투사체 발사 위치 (없으면 본체 위치)
     public LayerMask targetLayer;        // 적 감지 레이어 (Inspector에서 설정 필요)
 
+    [Header("Health Bar")]
+    [SerializeField] private HealthBarController healthBarPrefab;
+    [SerializeField] private Transform healthBarAttachPoint;
+    private HealthBarController healthBarInstance;
+
     private float _currentHealth;
     private float _lastAttackTime;
     private IDamageable _targetUnit;     // 현재 공격 대상
@@ -168,7 +173,21 @@ public class PlayerUnit : RTSUnit, ISelectable, IDamageable
 
     public void TakeDamage(float amount)
     {
+        if (_currentHealth <= 0) return;
+
+        // 데미지를 처음 받으면 체력바를 생성하고 활성화합니다.
+        if (healthBarInstance == null && healthBarPrefab != null)
+        {
+            Transform parent = healthBarAttachPoint != null ? healthBarAttachPoint : transform;
+            healthBarInstance = Instantiate(healthBarPrefab, parent);
+            healthBarInstance.gameObject.SetActive(true);
+        }
+
         _currentHealth -= amount;
+
+        // 체력바 UI를 업데이트합니다.
+        healthBarInstance?.UpdateHealth(_currentHealth, maxHealth);
+
         if (_currentHealth <= 0)
         {
             Die();
