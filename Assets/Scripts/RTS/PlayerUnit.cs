@@ -7,7 +7,6 @@ public class PlayerUnit : RTSUnit, ISelectable, IDamageable
     public UnitType unitType = UnitType.Troop; // 유닛 타입 (Elite/Troop)
     public GameObject selectionMarker;
     
-    private ConstructionSite _currentSite; // 현재 위치한 건설 부지
     private bool _hasMoveCommand;          // 플레이어 이동 명령 상태
 
     [Header("Combat Stats")]
@@ -119,38 +118,6 @@ public class PlayerUnit : RTSUnit, ISelectable, IDamageable
     public void OnDeselected()
     {
         if (selectionMarker != null) selectionMarker.SetActive(false);
-    }
-
-    // =========================================================
-    // 건설 시스템 관련 (ConstructionSite 상호작용)
-    // =========================================================
-    
-    public void SetCurrentConstructionSite(ConstructionSite site)
-    {
-        _currentSite = site;
-    }
-
-    public ConstructionSite GetCurrentConstructionSite()
-    {
-        return _currentSite;
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        var site = other.GetComponent<ConstructionSite>();
-        if (site != null)
-        {
-            site.OnUnitEnter(this); // PlayerUnit은 RTSUnit을 상속받으므로 호환 가능하지만, ConstructionSite도 수정 예정
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        var site = other.GetComponent<ConstructionSite>();
-        if (site != null)
-        {
-            site.OnUnitExit(this);
-        }
     }
 
     // =========================================================

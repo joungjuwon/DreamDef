@@ -37,6 +37,18 @@ public class ResourceManager : MonoBehaviour
         UpdateResourceUI();
     }
 
+    // 자원 사용 시도 (성공 시 true, 실패 시 false 반환)
+    public bool TrySpendResources(int amount)
+    {
+        if (_currentResources >= amount)
+        {
+            _currentResources -= amount;
+            UpdateResourceUI();
+            return true;
+        }
+        return false;
+    }
+
     private void UpdateResourceUI()
     {
         if (resourceText != null)

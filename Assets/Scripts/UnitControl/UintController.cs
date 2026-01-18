@@ -111,31 +111,6 @@ public class UintController : MonoBehaviour
         }
     }
 
-    // 5. 건설 상호작용 (Action: Build) - 'F'키
-    private void OnBuild(InputValue value)
-    {
-        if (!value.isPressed) return;
-
-        // 엘리트 유닛 찾기 (선택된 유닛 중에서 먼저 찾고, 없으면 전체에서 찾음)
-        PlayerUnit eliteUnit = _selectedUnits.FirstOrDefault(u => u.unitType == UnitType.Elite);
-
-        if (eliteUnit == null)
-        {
-            // 선택하지 않았더라도 씬에 있는 엘리트 유닛을 찾아 명령 수행 (메인 캐릭터 개념)
-            eliteUnit = FindObjectsByType<PlayerUnit>(FindObjectsSortMode.None)
-                        .FirstOrDefault(u => u.unitType == UnitType.Elite);
-        }
-
-        if (eliteUnit != null)
-        {
-            ConstructionSite site = eliteUnit.GetCurrentConstructionSite();
-            if (site != null)
-            {
-                site.Build();
-            }
-        }
-    }
-
     // 대형을 유지하며 이동 명령을 내리는 함수
     private void MoveSelectedUnits(Vector3 targetPosition)
     {

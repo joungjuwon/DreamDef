@@ -1,53 +1,122 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
+using System.Collections.Generic;
 
 public class ConstructionSite : MonoBehaviour
 {
     [Header("건설 설정")]
-    [SerializeField] private GameObject buildingPrefab; // 지어질 건물 프리팹
-    [SerializeField] private GameObject previewObject;  // 반투명 미리보기 오브젝트 (Editor에서 미리 배치 후 비활성화 해두세요)
+    [SerializeField] private ConstructionUI constructionUI;
 
     private bool _isBuilt = false;
+    private Camera _mainCamera;
 
     private void Start()
     {
-        if (previewObject != null)
+        _mainCamera = Camera.main;
+        if (_mainCamera == null)
         {
-            // 만약 previewObject가 씬에 없는 프리팹 에셋이라면 인스턴스화(생성)하여 사용합니다.
-            if (!previewObject.scene.IsValid())
+            Debug.LogError("[ConstructionSite] 오류: 'MainCamera' 태그가 붙은 카메라를 찾을 수 없습니다!");
+        }
+
+        if (constructionUI != null)
+            constructionUI.gameObject.SetActive(false);
+        else
+            Debug.LogError("[ConstructionSite] 오류: ConstructionUI가 연결되지 않았습니다!");
+    }
+
+    private void Update()
+    {
+        // 1. 마우스 장치 연결 확인
+        if (Mouse.current == null) return;
+
+        // 마우스 왼쪽 버튼 클릭 감지 (New Input System)
+        if (Mouse.current.leftButton.wasPressedThisFrame)
+        {
+            Debug.Log("[ConstructionSite] 마우스 클릭 감지됨 (Input System)");
+
+            // UI를 클릭한 경우(버튼 등)에는 건설 부지 클릭 무시
+            if (IsPointerOverUI())
             {
-                previewObject = Instantiate(previewObject, transform.position, transform.rotation, transform);
+                Debug.Log("[ConstructionSite] UI 위에서 클릭됨 -> 무시");
+                return;
             }
 
-            // 시작 시 미리보기는 숨김
-            previewObject.SetActive(false);
+            DetectClick();
         }
     }
 
-    // 유닛이 구역에 들어왔을 때
-    public void OnUnitEnter(PlayerUnit unit)
+    // UI 요소(Layer가 UI인 오브젝트) 위에 마우스가 있는지 확인하는 함수
+    private bool IsPointerOverUI()
+    {
+        if (EventSystem.current == null) return false;
+
+        PointerEventData eventData = new PointerEventData(EventSystem.current);
+        eventData.position = Mouse.current.position.ReadValue();
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventData, results);
+
+        foreach (RaycastResult result in results)
+        {
+            // UI 레이어(보통 Layer 5)에 있는 오브젝트만 진짜 UI로 간주합니다.
+            if (result.gameObject.layer == LayerMask.NameToLayer("UI"))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void DetectClick()
     {
         if (_isBuilt) return;
+        if (_mainCamera == null) return;
 
-        // 엘리트 유닛인 경우에만 반응
-        if (unit.unitType == UnitType.Elite)
+        Vector2 mousePos = Mouse.current.position.ReadValue();
+
+        // 마우스 위치에서 레이 발사
+        Ray ray = _mainCamera.ScreenPointToRay(mousePos);
+        
+        // 씬 뷰에서 레이를 그려줍니다 (디버깅용 빨간선)
+        Debug.DrawRay(ray.origin, ray.direction * 1000f, Color.red, 1.0f);
+        
+        if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            if (previewObject != null) previewObject.SetActive(true);
-            unit.SetCurrentConstructionSite(this); // 유닛에게 "나 여기 있어"라고 알림
+            Debug.Log($"[ConstructionSite] Raycast 충돌: {hit.transform.name}");
+
+            // 레이가 이 오브젝트(건설 부지)와 충돌했는지 확인
+            if (hit.transform == transform)
+            {
+                Debug.Log($"[ConstructionSite] 건설 부지 클릭 성공: {gameObject.name}");
+                
+                if (constructionUI != null)
+                {
+                    constructionUI.Open(this);
+                }
+            }
+            else
+            {
+                // 다른 물체를 클릭했을 때, 현재 이 부지가 UI를 열고 있었다면 닫습니다.
+                if (constructionUI != null && constructionUI.CurrentSite == this)
+                {
+                    constructionUI.Close();
+                }
+                Debug.Log($"[ConstructionSite] 다른 물체가 클릭됨: {hit.transform.name}");
+            }
+        }
+        else
+        {
+            // 허공(Skybox 등)을 클릭했을 때도 UI를 닫습니다.
+            if (constructionUI != null && constructionUI.CurrentSite == this)
+            {
+                constructionUI.Close();
+            }
+            Debug.Log("[ConstructionSite] Raycast가 허공을 클릭했습니다.");
         }
     }
 
-    // 유닛이 구역에서 나갔을 때
-    public void OnUnitExit(PlayerUnit unit)
-    {
-        if (unit.unitType == UnitType.Elite)
-        {
-            if (previewObject != null) previewObject.SetActive(false);
-            unit.SetCurrentConstructionSite(null); // 유닛에게 "나 이제 없어"라고 알림
-        }
-    }
-
-    // 실제 건설 실행 (F키 눌렀을 때 호출됨)
-    public void Build()
+    // 실제 건설 실행 (UI 버튼에서 호출)
+    public void Build(GameObject buildingPrefab)
     {
         if (_isBuilt) return;
 
@@ -61,8 +130,8 @@ public class ConstructionSite : MonoBehaviour
 
         _isBuilt = true;
         
-        // 미리보기 제거 및 부지 비활성화
-        if (previewObject != null) Destroy(previewObject);
-        gameObject.SetActive(false);
+        // UI 숨김 및 부지 비활성화
+        if (constructionUI != null) constructionUI.Close();
+        Destroy(gameObject);
     }
 }
