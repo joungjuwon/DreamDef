@@ -132,6 +132,8 @@ public class ConstructionSite : MonoBehaviour
         
         // UI 숨김 및 부지 비활성화
         if (constructionUI != null) constructionUI.Close();
-        Destroy(gameObject);
+        
+        // [수정] 즉시 파괴하면 에디터 인스펙터 갱신 충돌로 오류가 발생할 수 있으므로 0.1초 딜레이를 줍니다.
+        Destroy(gameObject, 0.1f);
     }
 }

@@ -1,19 +1,17 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(Button))]
-public class ConstructionButton : MonoBehaviour
+public class ConstructionButton : MonoBehaviour, IPointerDownHandler
 {
     [SerializeField] private Image iconDisplay; // 버튼에 표시될 아이콘 이미지 컴포넌트
 
     private BuildingData _data;
-    private Button _button;
     private ConstructionUI _uiManager;
 
     private void Awake()
     {
-        _button = GetComponent<Button>();
-        _button.onClick.AddListener(OnButtonClick);
         if (iconDisplay == null) iconDisplay = GetComponent<Image>();
 
         // [안전장치 1] 버튼이 클릭되려면 Raycast Target이 반드시 켜져 있어야 합니다.
@@ -43,9 +41,10 @@ public class ConstructionButton : MonoBehaviour
         }
     }
 
-    private void OnButtonClick()
+    // IPointerDownHandler 인터페이스 구현: 버튼 컴포넌트의 OnClick보다 더 확실하게 입력을 받습니다.
+    public void OnPointerDown(PointerEventData eventData)
     {
-        Debug.Log($"[ConstructionButton] 버튼 클릭됨: {(_data != null ? _data.buildingName : "데이터 없음")}");
+        Debug.Log($"[ConstructionButton] 버튼 눌림(OnPointerDown): {(_data != null ? _data.buildingName : "데이터 없음")}");
 
         if (_uiManager != null && _data != null)
         {
