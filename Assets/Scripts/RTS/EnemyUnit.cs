@@ -4,6 +4,13 @@ using System.Collections.Generic;
 
 public class EnemyUnit : RTSUnit, IDamageable
 {
+    public enum EnemyState
+    {
+        Moving,     // 본진으로 이동 중 (기본 상태)
+        Attacking,  // 유닛 추적 및 공격 중
+        Dead        // 사망
+    }
+
     private Transform _targetBase;
 
     [Header("Combat Stats")]
@@ -17,6 +24,9 @@ public class EnemyUnit : RTSUnit, IDamageable
     public Transform projectileSpawnPoint;
     public LayerMask targetLayer;
 
+    [Header("Visuals")]
+    [SerializeField] private Animator _animator;
+
     [Header("AI Settings")]
     public List<string> priorityTags = new List<string>();
 
@@ -29,15 +39,16 @@ public class EnemyUnit : RTSUnit, IDamageable
     private float _lastAttackTime;
     private IDamageable _targetUnit;
     private float _lastDetectionTime;
+    private EnemyState _currentState = EnemyState.Moving; // 현재 상태
 
     public event Action OnDeath;
-    private bool _isDead = false;
 
     public enum CombatStyle { Melee, Ranged }
 
     private void Start()
     {
         _currentHealth = maxHealth;
+        if (_animator == null) _animator = GetComponentInChildren<Animator>();
         
         // 태그가 "Base"인 오브젝트를 찾아 목표로 설정
         GameObject baseObj = GameObject.FindGameObjectWithTag("Base");
@@ -52,49 +63,91 @@ public class EnemyUnit : RTSUnit, IDamageable
 
         CreateRangeCollider("AttackRange", attackRange);
         CreateRangeCollider("DetectionRange", detectionRange);
+        
+        SetState(EnemyState.Moving);
     }
 
     private void Update()
     {
-        // 1. 타겟 감지
-        if (_targetUnit == null && Time.time >= _lastDetectionTime + 0.2f)
+        if (_currentState == EnemyState.Dead) return;
+
+        if (_animator != null && _agent != null)
+        {
+            bool isMoving = _agent.velocity.sqrMagnitude > 0.1f;
+            _animator.SetBool("Walk", isMoving);
+        }
+
+        switch (_currentState)
+        {
+            case EnemyState.Moving:
+                UpdateMoving();
+                break;
+            case EnemyState.Attacking:
+                UpdateAttacking();
+                break;
+        }
+    }
+
+    private void SetState(EnemyState newState)
+    {
+        if (_currentState == newState) return;
+        _currentState = newState;
+
+        switch (_currentState)
+        {
+            case EnemyState.Moving:
+                if (_agent.isOnNavMesh) _agent.isStopped = false;
+                break;
+            case EnemyState.Attacking:
+                break;
+            case EnemyState.Dead:
+                HandleDeath();
+                break;
+        }
+    }
+
+    private void UpdateMoving()
+    {
+        // 주기적으로 타겟 감지
+        if (Time.time >= _lastDetectionTime + 0.2f)
         {
             DetectEnemies();
             _lastDetectionTime = Time.time;
         }
 
-        // 2. 전투 및 이동 로직
-        if (_targetUnit != null)
-        {
-            if (_targetUnit.Equals(null))
-            {
-                _targetUnit = null;
-                return;
-            }
-
-            float distance = Vector3.Distance(transform.position, _targetUnit.transform.position);
-            
-            if (distance <= attackRange)
-            {
-                Stop(); // RTSUnit의 Stop() 호출
-                Vector3 dir = (_targetUnit.transform.position - transform.position).normalized;
-                dir.y = 0;
-                if (dir != Vector3.zero) transform.rotation = Quaternion.LookRotation(dir);
-
-                if (Time.time >= _lastAttackTime + attackCooldown)
-                {
-                    Attack();
-                    _lastAttackTime = Time.time;
-                }
-            }
-            else
-            {
-                MoveTo(_targetUnit.transform.position); // RTSUnit의 MoveTo() 호출
-            }
-        }
-        else if (_targetBase != null)
+        // 타겟이 없으면 본진으로 이동
+        if (_targetUnit == null && _targetBase != null)
         {
             MoveTo(_targetBase.position);
+        }
+    }
+
+    private void UpdateAttacking()
+    {
+        if (_targetUnit == null || _targetUnit.Equals(null))
+        {
+            SetState(EnemyState.Moving);
+            return;
+        }
+
+        float distance = Vector3.Distance(transform.position, _targetUnit.transform.position);
+        
+        if (distance <= attackRange)
+        {
+            Stop(); // RTSUnit의 Stop() 호출
+            Vector3 dir = (_targetUnit.transform.position - transform.position).normalized;
+            dir.y = 0;
+            if (dir != Vector3.zero) transform.rotation = Quaternion.LookRotation(dir);
+
+            if (Time.time >= _lastAttackTime + attackCooldown)
+            {
+                Attack();
+                _lastAttackTime = Time.time;
+            }
+        }
+        else
+        {
+            MoveTo(_targetUnit.transform.position); // RTSUnit의 MoveTo() 호출
         }
     }
 
@@ -122,6 +175,7 @@ public class EnemyUnit : RTSUnit, IDamageable
         if (bestTarget != null)
         {
             _targetUnit = bestTarget;
+            SetState(EnemyState.Attacking);
         }
     }
 
@@ -156,7 +210,7 @@ public class EnemyUnit : RTSUnit, IDamageable
 
     public void TakeDamage(float amount)
     {
-        if (_isDead) return;
+        if (_currentState == EnemyState.Dead) return;
 
         // 데미지를 처음 받으면 체력바를 생성하고 활성화합니다.
         if (healthBarInstance == null && healthBarPrefab != null)
@@ -171,11 +225,27 @@ public class EnemyUnit : RTSUnit, IDamageable
         // 체력바 UI를 업데이트합니다.
         healthBarInstance?.UpdateHealth(_currentHealth, maxHealth);
 
-        if (_currentHealth <= 0) Die();
+        if (_currentHealth <= 0) SetState(EnemyState.Dead);
     }
 
     private void Attack()
     {
+        Debug.Log($"[EnemyUnit] Attack Triggered on {gameObject.name}");
+        if (_animator != null)
+        {
+            _animator.SetTrigger("Attack");
+        }
+        else
+        {
+            OnAttackHit();
+        }
+    }
+
+    public void OnAttackHit()
+    {
+        Debug.Log($"[EnemyUnit] OnAttackHit Event Received on {gameObject.name}");
+        if (_targetUnit == null || _targetUnit.Equals(null)) return;
+
         if (combatStyle == CombatStyle.Melee)
         {
             _targetUnit.TakeDamage(attackDamage);
@@ -192,11 +262,17 @@ public class EnemyUnit : RTSUnit, IDamageable
         }
     }
 
-    private void Die()
+    private void HandleDeath()
     {
-        _isDead = true;
+        if (_animator != null) _animator.SetBool("Dead", true);
+        
         OnDeath?.Invoke();
-        Destroy(gameObject);
+        
+        if (_agent != null) _agent.enabled = false;
+        Collider[] colliders = GetComponentsInChildren<Collider>();
+        foreach (var col in colliders) col.enabled = false;
+        this.enabled = false;
+        Destroy(gameObject, 3.0f);
     }
 
     private void CreateRangeCollider(string name, float range)

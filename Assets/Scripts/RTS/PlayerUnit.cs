@@ -1,13 +1,24 @@
 using UnityEngine;
 using System;
+using System.Collections;
 
 public class PlayerUnit : RTSUnit, ISelectable, IDamageable
 {
+    public enum UnitState
+    {
+        Idle,           // 대기 (적 탐색)
+        Moving,         // 이동 중 (명령 수행)
+        Attacking,      // 공격/추적 중
+        Dead,           // 사망
+        Resurrecting    // 부활 대기 중 (엘리트 유닛)
+    }
+
     [Header("Player Unit Settings")]
     public UnitType unitType = UnitType.Troop; // 유닛 타입 (Elite/Troop)
+    [SerializeField] private Animator _animator; // 애니메이터 컴포넌트
     public GameObject selectionMarker;
     
-    private bool _hasMoveCommand;          // 플레이어 이동 명령 상태
+    public float resurrectionTime = 10f;   // 엘리트 유닛 부활 시간
 
     [Header("Combat Stats")]
     public float maxHealth = 100f;       // 최대 체력
@@ -29,6 +40,7 @@ public class PlayerUnit : RTSUnit, ISelectable, IDamageable
     private float _lastAttackTime;
     private IDamageable _targetUnit;     // 현재 공격 대상
     private float _lastDetectionTime;    // 감지 최적화용 타이머
+    private UnitState _currentState = UnitState.Idle; // 현재 상태
 
     public event Action<PlayerUnit> OnDeath;
 
@@ -37,73 +49,129 @@ public class PlayerUnit : RTSUnit, ISelectable, IDamageable
     protected void Start()
     {
         _currentHealth = maxHealth;
+        if (_animator == null) _animator = GetComponentInChildren<Animator>();
         if (selectionMarker != null) selectionMarker.SetActive(false);
 
         CreateRangeCollider("AttackRange", attackRange);
         CreateRangeCollider("DetectionRange", detectionRange);
+        
+        SetState(UnitState.Idle);
     }
 
     protected void Update()
     {
-        // 플레이어 이동 명령 처리 (최우선 순위)
-        if (_hasMoveCommand)
+        if (_currentState == UnitState.Dead || _currentState == UnitState.Resurrecting) return;
+
+        // 애니메이션: 이동 상태 업데이트 (Walk)
+        if (_animator != null && _agent != null)
         {
-            // 목적지에 도착했는지 확인
-            if (!_agent.pathPending && _agent.remainingDistance <= _agent.stoppingDistance)
-            {
-                _hasMoveCommand = false; // 이동 완료, 자동 공격 모드 복귀
-                _agent.isStopped = false;
-            }
-            return; // 이동 중에는 부모 클래스의 자동 공격 로직을 수행하지 않음
+            bool isWalking = _agent.velocity.sqrMagnitude > 0.1f;
+            _animator.SetBool("Walk", isWalking);
         }
 
-        // 1. 타겟이 없으면 주변 적 감지
-        if (_targetUnit == null && Time.time >= _lastDetectionTime + 0.2f)
+        // 상태별 로직 실행
+        switch (_currentState)
+        {
+            case UnitState.Idle:
+                UpdateIdle();
+                break;
+            case UnitState.Moving:
+                UpdateMoving();
+                break;
+            case UnitState.Attacking:
+                UpdateAttacking();
+                break;
+        }
+    }
+
+    // 상태 변경 함수
+    private void SetState(UnitState newState)
+    {
+        if (_currentState == newState) return;
+
+        _currentState = newState;
+
+        // 상태 진입 로직
+        switch (_currentState)
+        {
+            case UnitState.Idle:
+                if (_agent.isOnNavMesh) _agent.isStopped = false;
+                break;
+            case UnitState.Moving:
+                if (_agent.isOnNavMesh) _agent.isStopped = false;
+                break;
+            case UnitState.Attacking:
+                break;
+            case UnitState.Dead:
+                HandleDeath();
+                break;
+            case UnitState.Resurrecting:
+                StartCoroutine(ResurrectRoutine());
+                break;
+        }
+    }
+
+    // --- 상태별 업데이트 로직 ---
+
+    private void UpdateIdle()
+    {
+        // 주기적으로 적 감지
+        if (Time.time >= _lastDetectionTime + 0.2f)
         {
             DetectEnemies();
             _lastDetectionTime = Time.time;
         }
+    }
 
-        // 2. 전투 및 추적 로직
-        if (_targetUnit != null)
+    private void UpdateMoving()
+    {
+        // 목적지 도착 확인
+        if (!_agent.pathPending && _agent.remainingDistance <= _agent.stoppingDistance)
         {
-            if (_targetUnit.Equals(null)) // 타겟이 파괴되었는지 확인
-            {
-                _targetUnit = null;
-                return;
-            }
+            SetState(UnitState.Idle);
+        }
+    }
 
-            float distance = Vector3.Distance(transform.position, _targetUnit.transform.position);
-            
-            if (distance <= attackRange)
-            {
-                _agent.isStopped = true;
-                Vector3 dir = (_targetUnit.transform.position - transform.position).normalized;
-                dir.y = 0;
-                if (dir != Vector3.zero) transform.rotation = Quaternion.LookRotation(dir);
+    private void UpdateAttacking()
+    {
+        if (_targetUnit == null || _targetUnit.Equals(null)) // 타겟이 없거나 파괴됨
+        {
+            SetState(UnitState.Idle);
+            return;
+        }
 
-                if (Time.time >= _lastAttackTime + attackCooldown)
-                {
-                    Attack();
-                    _lastAttackTime = Time.time;
-                }
-            }
-            else
+        float distance = Vector3.Distance(transform.position, _targetUnit.transform.position);
+        
+        if (distance <= attackRange)
+        {
+            _agent.isStopped = true;
+            Vector3 dir = (_targetUnit.transform.position - transform.position).normalized;
+            dir.y = 0;
+            if (dir != Vector3.zero) transform.rotation = Quaternion.LookRotation(dir);
+
+            if (Time.time >= _lastAttackTime + attackCooldown)
             {
-                _agent.isStopped = false;
-                _agent.SetDestination(_targetUnit.transform.position);
+                Attack();
+                _lastAttackTime = Time.time;
             }
+        }
+        else
+        {
+            _agent.isStopped = false;
+            _agent.SetDestination(_targetUnit.transform.position);
         }
     }
 
     // 플레이어 이동 명령
     public override void MoveTo(Vector3 destination)
     {
+        if (_currentState == UnitState.Dead || _currentState == UnitState.Resurrecting) return;
+
         if (_agent.isOnNavMesh)
         {
-            _hasMoveCommand = true;     // 플레이어 명령 상태 활성화
-            _targetUnit = null;         // 기존 타겟 해제 (이동 우선)
+            _targetUnit = null;       // 이동 명령 시 타겟 해제
             base.MoveTo(destination);   // 기본 이동 로직 호출
+            SetState(UnitState.Moving); // 이동 상태로 전환
         }
     }
 
@@ -133,6 +201,7 @@ public class PlayerUnit : RTSUnit, ISelectable, IDamageable
             if (unit != null && unit != (IDamageable)this)
             {
                 _targetUnit = unit;
+                SetState(UnitState.Attacking); // 공격 상태로 전환
                 break;
             }
         }
@@ -140,7 +209,7 @@ public class PlayerUnit : RTSUnit, ISelectable, IDamageable
 
     public void TakeDamage(float amount)
     {
-        if (_currentHealth <= 0) return;
+        if (_currentState == UnitState.Dead || _currentState == UnitState.Resurrecting) return;
 
         // 데미지를 처음 받으면 체력바를 생성하고 활성화합니다.
         if (healthBarInstance == null && healthBarPrefab != null)
@@ -157,12 +226,32 @@ public class PlayerUnit : RTSUnit, ISelectable, IDamageable
 
         if (_currentHealth <= 0)
         {
-            Die();
+            SetState(UnitState.Dead);
         }
     }
 
     private void Attack()
     {
+        Debug.Log($"[PlayerUnit] Attack Triggered on {gameObject.name}");
+        if (_animator != null)
+        {
+            _animator.SetTrigger("Attack");
+            // 애니메이터가 있으면 Animation Event(OnAttackHit)를 통해 데미지를 줍니다.
+        }
+        else
+        {
+            // 애니메이터가 없으면 즉시 데미지를 줍니다.
+            OnAttackHit();
+        }
+    }
+
+    // 애니메이션 이벤트에서 호출할 함수 (public이어야 함)
+    public void OnAttackHit()
+    {
+        Debug.Log($"[PlayerUnit] OnAttackHit Event Received on {gameObject.name}");
+        if (_currentState != UnitState.Attacking) return; // 공격 상태가 아니면 데미지 무시
+        if (_targetUnit == null || _targetUnit.Equals(null)) return;
+
         if (combatStyle == CombatStyle.Melee)
         {
             _targetUnit.TakeDamage(attackDamage);
@@ -179,10 +268,58 @@ public class PlayerUnit : RTSUnit, ISelectable, IDamageable
         }
     }
 
-    private void Die()
+    private void HandleDeath()
     {
-        OnDeath?.Invoke(this);
-        Destroy(gameObject);
+        if (_animator != null) _animator.SetBool("Dead", true);
+
+        if (unitType == UnitType.Elite)
+        {
+            SetState(UnitState.Resurrecting);
+        }
+        else
+        {
+            OnDeath?.Invoke(this);
+            
+            // 사망 애니메이션을 보여주기 위해 즉시 삭제하지 않고 기능만 비활성화
+            if (_agent != null) _agent.enabled = false;
+            Collider[] colliders = GetComponentsInChildren<Collider>();
+            foreach (var col in colliders) col.enabled = false;
+            this.enabled = false; // 스크립트 업데이트 중지
+            Destroy(gameObject, 3.0f); // 3초 후 오브젝트 삭제
+        }
+    }
+
+    private IEnumerator ResurrectRoutine()
+    {
+        // 1. 상호작용 및 이동 비활성화
+        if (_agent != null) _agent.enabled = false;
+        
+        // 모든 콜라이더 비활성화 (본체 및 감지 범위 등)
+        Collider[] colliders = GetComponentsInChildren<Collider>();
+        foreach (var col in colliders) col.enabled = false;
+
+        // 2. 시각적 처리: 렌더러를 끄지 않고 유지 (시체처럼 보이게 함)
+        // 만약 쓰러지는 애니메이션이 있다면 여기서 Play 하거나, transform.Rotate(-90, 0, 0) 등으로 눕힐 수 있습니다.
+
+        // 체력바 및 선택 마커 숨기기
+        if (healthBarInstance != null) healthBarInstance.gameObject.SetActive(false);
+        OnDeselected();
+
+        // 3. 부활 대기
+        yield return new WaitForSeconds(resurrectionTime);
+
+        // 4. 상태 복구
+        _currentHealth = maxHealth;
+        if (_animator != null) _animator.SetBool("Dead", false);
+
+        // 5. 컴포넌트 및 시각적 요소 활성화
+        foreach (var col in colliders) col.enabled = true;
+        
+        if (_agent != null) _agent.enabled = true;
+        if (healthBarInstance != null) healthBarInstance.gameObject.SetActive(true);
+        if (healthBarInstance != null) healthBarInstance.UpdateHealth(_currentHealth, maxHealth);
+
+        SetState(UnitState.Idle); // 부활 완료 후 대기 상태로 복귀
     }
 
     private void CreateRangeCollider(string name, float range)
