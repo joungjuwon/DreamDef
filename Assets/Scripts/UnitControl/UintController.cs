@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 using System.Linq;
 using System.Collections.Generic;
 
-public class UintController : MonoBehaviour
+public class UnitController : MonoBehaviour
 {
     [Header("Settings")]
     public LayerMask unitLayer;    // 유닛 레이어 (Unit)
