@@ -10,7 +10,8 @@ public class PlayerUnit : RTSUnit, ISelectable, IDamageable
         Moving,         // 이동 중 (명령 수행)
         Attacking,      // 공격/추적 중
         Dead,           // 사망
-        Resurrecting    // 부활 대기 중 (엘리트 유닛)
+        Resurrecting,   // 부활 대기 중 (엘리트 유닛)
+        Action          // 상호작용 중
     }
 
     [Header("Player Unit Settings")]
@@ -107,6 +108,10 @@ public class PlayerUnit : RTSUnit, ISelectable, IDamageable
                 break;
             case UnitState.Resurrecting:
                 StartCoroutine(ResurrectRoutine());
+                break;
+            case UnitState.Action:
+                if (_agent.isOnNavMesh) _agent.isStopped = true;
+                if (_animator != null) _animator.SetTrigger("Action");
                 break;
         }
     }
@@ -245,6 +250,12 @@ public class PlayerUnit : RTSUnit, ISelectable, IDamageable
         }
     }
 
+    // 상호작용 애니메이션 실행 (특정 상황에서 호출)
+    public void PerformAction()
+    {
+        SetState(UnitState.Action);
+    }
+
     // 애니메이션 이벤트에서 호출할 함수 (public이어야 함)
     public void OnAttackHit()
     {
@@ -266,6 +277,18 @@ public class PlayerUnit : RTSUnit, ISelectable, IDamageable
                 if (proj != null) proj.Setup(_targetUnit, attackDamage);
             }
         }
+    }
+
+    // 애니메이션 이벤트: Action 종료 시 호출
+    public void OnActionFinished()
+    {
+        SetState(UnitState.Idle);
+    }
+
+    // 애니메이션 이벤트: Revive 종료 시 호출
+    public void OnReviveFinished()
+    {
+        SetState(UnitState.Idle);
     }
 
     private void HandleDeath()
@@ -310,7 +333,11 @@ public class PlayerUnit : RTSUnit, ISelectable, IDamageable
 
         // 4. 상태 복구
         _currentHealth = maxHealth;
-        if (_animator != null) _animator.SetBool("Dead", false);
+        if (_animator != null)
+        {
+            _animator.SetBool("Dead", false);
+            _animator.SetTrigger("Revive");
+        }
 
         // 5. 컴포넌트 및 시각적 요소 활성화
         foreach (var col in colliders) col.enabled = true;
@@ -319,7 +346,7 @@ public class PlayerUnit : RTSUnit, ISelectable, IDamageable
         if (healthBarInstance != null) healthBarInstance.gameObject.SetActive(true);
         if (healthBarInstance != null) healthBarInstance.UpdateHealth(_currentHealth, maxHealth);
 
-        SetState(UnitState.Idle); // 부활 완료 후 대기 상태로 복귀
+        // SetState(UnitState.Idle); // 제거됨: 애니메이션 이벤트 OnReviveFinished에서 처리
     }
 
     private void CreateRangeCollider(string name, float range)
