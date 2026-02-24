@@ -17,7 +17,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7649160737851286069
 Transform:
   m_ObjectHideFlags: 0
@@ -273,6 +273,8 @@ MonoBehaviour:
   attackRange: 5
   detectionRange: 10
   attackCooldown: 1
+  attackHitDelay: 0.5
+  useAnimationEvent: 1
   combatStyle: 0
   projectilePrefab: {fileID: 0}
   projectileSpawnPoint: {fileID: 0}

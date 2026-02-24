@@ -20,6 +20,7 @@ public class PlayerUnit : RTSUnit, ISelectable, IDamageable
     public GameObject selectionMarker;
     
     public float resurrectionTime = 10f;   // 엘리트 유닛 부활 시간
+    public float reviveAnimationDuration = 2.0f; // 부활 애니메이션 시간 (자연스러운 전환용)
 
     [Header("Combat Stats")]
     public float maxHealth = 100f;       // 최대 체력
@@ -27,6 +28,8 @@ public class PlayerUnit : RTSUnit, ISelectable, IDamageable
     public float attackRange = 5f;       // 사거리
     public float detectionRange = 10f;   // 감지 범위
     public float attackCooldown = 1.0f;  // 공격 속도 (초)
+    public float attackHitDelay = 0.5f;  // 공격 판정 딜레이 (애니메이션 이벤트 미사용 시)
+    public bool useAnimationEvent = false; // 애니메이션 이벤트 사용 여부
     public CombatStyle combatStyle = CombatStyle.Melee; // 공격 타입
     public GameObject projectilePrefab;  // 투사체 프리팹 (원거리용)
     public Transform projectileSpawnPoint; // 투사체 발사 위치 (없으면 본체 위치)
@@ -51,6 +54,16 @@ public class PlayerUnit : RTSUnit, ISelectable, IDamageable
     {
         _currentHealth = maxHealth;
         if (_animator == null) _animator = GetComponentInChildren<Animator>();
+
+        // [자동 수정] Animator가 있는 오브젝트에 이벤트를 받을 중계 스크립트가 없으면 자동으로 추가합니다.
+        if (_animator != null)
+        {
+            if (_animator.GetComponent<AnimationEventRelay>() == null)
+            {
+                _animator.gameObject.AddComponent<AnimationEventRelay>();
+            }
+        }
+
         if (selectionMarker != null) selectionMarker.SetActive(false);
 
         CreateRangeCollider("AttackRange", attackRange);
@@ -66,7 +79,8 @@ public class PlayerUnit : RTSUnit, ISelectable, IDamageable
         // 애니메이션: 이동 상태 업데이트 (Walk)
         if (_animator != null && _agent != null)
         {
-            bool isWalking = _agent.velocity.sqrMagnitude > 0.1f;
+            // 공격 중일 때는 걷기 애니메이션을 강제로 끕니다. (관성으로 인한 애니메이션 끊김 방지)
+            bool isWalking = _currentState != UnitState.Attacking && _agent.velocity.sqrMagnitude > 0.1f;
             _animator.SetBool("Walk", isWalking);
         }
 
@@ -156,7 +170,7 @@ public class PlayerUnit : RTSUnit, ISelectable, IDamageable
 
             if (Time.time >= _lastAttackTime + attackCooldown)
             {
-                Attack();
+                StartAttack();
                 _lastAttackTime = Time.time;
             }
         }
@@ -178,6 +192,15 @@ public class PlayerUnit : RTSUnit, ISelectable, IDamageable
             base.MoveTo(destination);   // 기본 이동 로직 호출
             SetState(UnitState.Moving); // 이동 상태로 전환
         }
+    }
+
+    // 강제 공격 명령 (UnitController에서 호출)
+    public void SetTarget(IDamageable target)
+    {
+        if (target == null || target.Equals(null)) return;
+        
+        _targetUnit = target;
+        SetState(UnitState.Attacking);
     }
 
     // =========================================================
@@ -235,19 +258,33 @@ public class PlayerUnit : RTSUnit, ISelectable, IDamageable
         }
     }
 
-    private void Attack()
+    // 내부 로직용 공격 시작 함수 (이름 변경: Attack -> StartAttack)
+    private void StartAttack()
     {
         Debug.Log($"[PlayerUnit] Attack Triggered on {gameObject.name}");
         if (_animator != null)
         {
             _animator.SetTrigger("Attack");
-            // 애니메이터가 있으면 Animation Event(OnAttackHit)를 통해 데미지를 줍니다.
         }
-        else
+        
+        // 애니메이터가 없거나, 애니메이션 이벤트를 사용하지 않는 경우 딜레이 후 타격 처리
+        if (_animator == null || !useAnimationEvent)
         {
-            // 애니메이터가 없으면 즉시 데미지를 줍니다.
-            OnAttackHit();
+            StartCoroutine(AttackHitRoutine());
         }
+    }
+
+    // 애니메이션 이벤트(Animation Event)가 'Attack'이라는 이름으로 호출할 때 받는 함수
+    // 오류 해결: 'Attack' has no receiver!
+    public void Attack()
+    {
+        OnAttackHit();
+    }
+
+    private IEnumerator AttackHitRoutine()
+    {
+        yield return new WaitForSeconds(attackHitDelay);
+        PerformAttackHit();
     }
 
     // 상호작용 애니메이션 실행 (특정 상황에서 호출)
@@ -258,6 +295,17 @@ public class PlayerUnit : RTSUnit, ISelectable, IDamageable
 
     // 애니메이션 이벤트에서 호출할 함수 (public이어야 함)
     public void OnAttackHit()
+    {
+        // 애니메이션 이벤트를 사용하도록 설정된 경우에만 이벤트 호출을 처리합니다.
+        // useAnimationEvent가 false일 때는 코루틴(AttackHitRoutine)이 PerformAttackHit를 호출하므로,
+        // 여기서 중복 실행을 방지하기 위해 무시합니다.
+        if (useAnimationEvent)
+        {
+            PerformAttackHit();
+        }
+    }
+
+    private void PerformAttackHit()
     {
         Debug.Log($"[PlayerUnit] OnAttackHit Event Received on {gameObject.name}");
         if (_currentState != UnitState.Attacking) return; // 공격 상태가 아니면 데미지 무시
@@ -275,6 +323,10 @@ public class PlayerUnit : RTSUnit, ISelectable, IDamageable
                 GameObject projObj = Instantiate(projectilePrefab, spawnPos, Quaternion.identity);
                 Projectile proj = projObj.GetComponent<Projectile>();
                 if (proj != null) proj.Setup(_targetUnit, attackDamage);
+            }
+            else
+            {
+                Debug.LogWarning($"[PlayerUnit] 원거리 공격 실패: {gameObject.name}에 Projectile Prefab이 할당되지 않았습니다.");
             }
         }
     }
@@ -346,7 +398,9 @@ public class PlayerUnit : RTSUnit, ISelectable, IDamageable
         if (healthBarInstance != null) healthBarInstance.gameObject.SetActive(true);
         if (healthBarInstance != null) healthBarInstance.UpdateHealth(_currentHealth, maxHealth);
 
-        // SetState(UnitState.Idle); // 제거됨: 애니메이션 이벤트 OnReviveFinished에서 처리
+        // [수정] 애니메이션 재생 시간만큼 대기 후 Idle 상태로 전환 (애니메이션 이벤트 의존성 제거)
+        yield return new WaitForSeconds(reviveAnimationDuration);
+        SetState(UnitState.Idle);
     }
 
     private void CreateRangeCollider(string name, float range)

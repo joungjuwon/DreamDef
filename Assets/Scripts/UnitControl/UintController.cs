@@ -8,6 +8,7 @@ public class UnitController : MonoBehaviour
     [Header("Settings")]
     public LayerMask unitLayer;    // 유닛 레이어 (Unit)
     public LayerMask groundLayer;  // 땅 레이어 (Ground) - 이동 명령용
+    public LayerMask attackLayer;  // 공격 대상 레이어 (Enemy, StageSelector 등)
     
     public RectTransform selectionBoxUI; // 드래그 박스 UI 이미지
     public float dragThreshold = 10f;    // 드래그 판정 거리
@@ -103,11 +104,31 @@ public class UnitController : MonoBehaviour
         Ray ray = _mainCamera.ScreenPointToRay(_currentMousePos);
         RaycastHit hit;
 
+        // 1. 공격 대상(적, 스테이지 선택 오브젝트 등) 클릭 확인
+        if (Physics.Raycast(ray, out hit, 1000f, attackLayer))
+        {
+            IDamageable target = hit.collider.GetComponent<IDamageable>();
+            if (target != null)
+            {
+                AttackSelectedUnits(target);
+                return; // 공격 명령을 내렸으므로 이동 명령은 실행하지 않음
+            }
+        }
+
         // 땅(Ground)을 클릭했는지 확인하고 이동 명령
         if (Physics.Raycast(ray, out hit, 1000f, groundLayer))
         {
             MoveSelectedUnits(hit.point);
             // (선택 사항) 클릭 위치에 파티클 효과 등을 넣을 수 있습니다.
+        }
+    }
+
+    // 선택된 유닛들에게 공격 명령을 내리는 함수
+    private void AttackSelectedUnits(IDamageable target)
+    {
+        foreach (var unit in _selectedUnits)
+        {
+            unit.SetTarget(target);
         }
     }
 

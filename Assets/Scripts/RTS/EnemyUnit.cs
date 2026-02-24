@@ -19,6 +19,8 @@ public class EnemyUnit : RTSUnit, IDamageable
     public float attackRange = 5f;
     public float detectionRange = 10f;
     public float attackCooldown = 1.0f;
+    public float attackHitDelay = 0.5f; // 공격 판정 딜레이 추가
+    public bool useAnimationEvent = false; // 애니메이션 이벤트 사용 여부 추가
     public CombatStyle combatStyle = CombatStyle.Melee;
     public GameObject projectilePrefab;
     public Transform projectileSpawnPoint;
@@ -49,6 +51,15 @@ public class EnemyUnit : RTSUnit, IDamageable
     {
         _currentHealth = maxHealth;
         if (_animator == null) _animator = GetComponentInChildren<Animator>();
+
+        // [자동 수정] Animator가 있는 오브젝트에 이벤트를 받을 중계 스크립트가 없으면 자동으로 추가합니다.
+        if (_animator != null)
+        {
+            if (_animator.GetComponent<AnimationEventRelay>() == null)
+            {
+                _animator.gameObject.AddComponent<AnimationEventRelay>();
+            }
+        }
         
         // 태그가 "Base"인 오브젝트를 찾아 목표로 설정
         GameObject baseObj = GameObject.FindGameObjectWithTag("Base");
@@ -73,7 +84,8 @@ public class EnemyUnit : RTSUnit, IDamageable
 
         if (_animator != null && _agent != null)
         {
-            bool isMoving = _agent.velocity.sqrMagnitude > 0.1f;
+            // 공격 중일 때는 걷기 애니메이션을 강제로 끕니다.
+            bool isMoving = _currentState != EnemyState.Attacking && _agent.velocity.sqrMagnitude > 0.1f;
             _animator.SetBool("Walk", isMoving);
         }
 
@@ -235,13 +247,29 @@ public class EnemyUnit : RTSUnit, IDamageable
         {
             _animator.SetTrigger("Attack");
         }
-        else
+        
+        // 애니메이터가 없거나, 애니메이션 이벤트를 사용하지 않는 경우 딜레이 후 타격 처리
+        if (_animator == null || !useAnimationEvent)
         {
-            OnAttackHit();
+            StartCoroutine(AttackHitRoutine());
         }
     }
 
+    private System.Collections.IEnumerator AttackHitRoutine()
+    {
+        yield return new WaitForSeconds(attackHitDelay);
+        PerformAttackHit();
+    }
+
     public void OnAttackHit()
+    {
+        if (useAnimationEvent)
+        {
+            PerformAttackHit();
+        }
+    }
+
+    private void PerformAttackHit()
     {
         Debug.Log($"[EnemyUnit] OnAttackHit Event Received on {gameObject.name}");
         if (_targetUnit == null || _targetUnit.Equals(null)) return;

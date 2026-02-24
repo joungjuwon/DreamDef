@@ -21,6 +21,7 @@ public class WaveManager : MonoBehaviour
     }
 
     [Header("Wave Settings")]
+    public int currentStageIndex = 1; // 현재 스테이지 번호 (인스펙터에서 설정)
     public WaveData[] waves; // 전체 웨이브 설정
     public Transform[] spawnPoints; // 적 유닛 소환 위치들
 
@@ -155,6 +156,12 @@ public class WaveManager : MonoBehaviour
             {
                 waveText.text = "STAGE CLEAR";
                 waveText.gameObject.SetActive(true);
+            }
+
+            // 스테이지 클리어 시 다음 스테이지 해금
+            if (StageManager.Instance != null)
+            {
+                StageManager.Instance.UnlockNextStage(currentStageIndex);
             }
         }
         else

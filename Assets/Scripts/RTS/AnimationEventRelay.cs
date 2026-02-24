@@ -24,4 +24,10 @@ public class AnimationEventRelay : MonoBehaviour
             _enemyUnit.OnAttackHit();
         }
     }
+
+    // 추가: 애니메이션 이벤트가 'Attack'이라는 이름으로 호출할 때 처리하는 함수
+    public void Attack()
+    {
+        OnAttackHit();
+    }
 }
