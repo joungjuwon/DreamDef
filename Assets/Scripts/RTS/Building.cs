@@ -80,6 +80,10 @@ public class Building : MonoBehaviour, IDamageable
                     {
                         ConstructionUI.Instance.OpenUpgrade(this, buildingData, false);
                     }
+                    else
+                    {
+                        Debug.LogWarning($"[Building] {gameObject.name}에 Building Data와 Next Upgrade가 모두 없습니다. 인스펙터를 확인하세요.");
+                    }
                 }
                 else
                 {

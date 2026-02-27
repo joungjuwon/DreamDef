@@ -184,17 +184,7 @@ public class WaveManager : MonoBehaviour
 
         if (_currentWaveIndex >= waves.Length)
         {
-            if (waveText != null)
-            {
-                waveText.text = "STAGE CLEAR";
-                waveText.gameObject.SetActive(true);
-            }
-
-            // 스테이지 클리어 시 다음 스테이지 해금
-            if (StageManager.Instance != null)
-            {
-                StageManager.Instance.UnlockNextStage(currentStageIndex);
-            }
+            StartCoroutine(StageClearRoutine());
         }
         else
         {
@@ -203,6 +193,32 @@ public class WaveManager : MonoBehaviour
 
             // 웨이브 클리어 후 다음 웨이브를 시작할 수 있도록 버튼 활성화
             if (startWaveButton != null) startWaveButton.interactable = true;
+        }
+    }
+
+    private IEnumerator StageClearRoutine()
+    {
+        if (waveText != null)
+        {
+            waveText.text = "STAGE CLEAR";
+            waveText.gameObject.SetActive(true);
+        }
+
+        // 스테이지 클리어 시 다음 스테이지 해금
+        if (StageManager.Instance != null)
+        {
+            StageManager.Instance.UnlockNextStage(currentStageIndex);
+        }
+
+        yield return new WaitForSeconds(3f); // 3초 대기 후 로비로 이동
+
+        if (StageManager.Instance != null)
+        {
+            StageManager.Instance.LoadLobby();
+        }
+        else
+        {
+            UnityEngine.SceneManagement.SceneManager.LoadScene("Lobby");
         }
     }
 
