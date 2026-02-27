@@ -26,6 +26,9 @@ public class EnemyUnit : RTSUnit, IDamageable
     public Transform projectileSpawnPoint;
     public LayerMask targetLayer;
 
+    [Header("Rewards")]
+    public int resourceReward = 10; // 처치 시 지급할 자원
+
     [Header("Visuals")]
     [SerializeField] private Animator _animator;
 
@@ -153,7 +156,7 @@ public class EnemyUnit : RTSUnit, IDamageable
 
             if (Time.time >= _lastAttackTime + attackCooldown)
             {
-                Attack();
+                StartAttack();
                 _lastAttackTime = Time.time;
             }
         }
@@ -173,6 +176,9 @@ public class EnemyUnit : RTSUnit, IDamageable
             IDamageable candidate = hit.GetComponent<IDamageable>();
             if (candidate != null && candidate != (IDamageable)this)
             {
+                // 파괴 불가능한 건물은 공격 대상에서 제외
+                if (candidate is Building building && building.isIndestructible) continue;
+
                 if (bestTarget == null)
                 {
                     bestTarget = candidate;
@@ -240,7 +246,8 @@ public class EnemyUnit : RTSUnit, IDamageable
         if (_currentHealth <= 0) SetState(EnemyState.Dead);
     }
 
-    private void Attack()
+    // 내부 로직용 공격 시작 함수 (이름 변경: Attack -> StartAttack)
+    private void StartAttack()
     {
         Debug.Log($"[EnemyUnit] Attack Triggered on {gameObject.name}");
         if (_animator != null)
@@ -253,6 +260,12 @@ public class EnemyUnit : RTSUnit, IDamageable
         {
             StartCoroutine(AttackHitRoutine());
         }
+    }
+
+    // 애니메이션 이벤트(Animation Event)가 'Attack'이라는 이름으로 호출할 때 받는 함수
+    public void Attack()
+    {
+        OnAttackHit();
     }
 
     private System.Collections.IEnumerator AttackHitRoutine()
@@ -293,6 +306,12 @@ public class EnemyUnit : RTSUnit, IDamageable
     private void HandleDeath()
     {
         if (_animator != null) _animator.SetBool("Dead", true);
+
+        // 적 처치 시 자원 지급
+        if (ResourceManager.Instance != null)
+        {
+            ResourceManager.Instance.AddResources(resourceReward);
+        }
         
         OnDeath?.Invoke();
         
@@ -300,6 +319,7 @@ public class EnemyUnit : RTSUnit, IDamageable
         Collider[] colliders = GetComponentsInChildren<Collider>();
         foreach (var col in colliders) col.enabled = false;
         this.enabled = false;
+        healthBarInstance.gameObject.SetActive(false);
         Destroy(gameObject, 3.0f);
     }
 

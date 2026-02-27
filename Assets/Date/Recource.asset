@@ -15,5 +15,5 @@ MonoBehaviour:
   buildingName: "\uC790\uC6D0"
   buildCost: 10
   description: "\uC790\uC6D0"
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 2ac4da33d9b026e4b9f68305cf30e76e, type: 3}
   buildingPrefab: {fileID: 3742608068984609666, guid: 8640a7dffab5fbf42a7608e04ef51bf7, type: 3}

@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro; // TextMeshPro를 사용하기 위해 필요합니다.
 using UnityEngine.InputSystem; // 새로운 인풋 시스템을 위해 추가
 using System.Collections;
+using UnityEngine.UI; // Button 컴포넌트 사용을 위해 추가
 
 public class WaveManager : MonoBehaviour
 {
@@ -12,6 +13,9 @@ public class WaveManager : MonoBehaviour
         public int count; // 소환할 수
         public float spawnInterval = 1f; // 소환 간격
         public float delayBefore = 0f; // 그룹 시작 전 대기 시간
+
+        [Tooltip("특정 스폰 위치를 지정합니다. 비워두면 전체 스폰 포인트 중 랜덤하게 선택됩니다.")]
+        public Transform specificSpawnPoint;
     }
 
     [System.Serializable]
@@ -27,6 +31,7 @@ public class WaveManager : MonoBehaviour
 
     [Header("UI")]
     public TextMeshProUGUI waveText; // 웨이브 정보를 표시할 UI 텍스트 (TMP)
+    public Button startWaveButton; // 인스펙터에서 할당할 웨이브 시작 버튼
 
     private int _currentWaveIndex = 0;
     private bool _isWaveActive = false;
@@ -38,6 +43,12 @@ public class WaveManager : MonoBehaviour
         if (waveText != null)
         {
             waveText.gameObject.SetActive(false);
+        }
+
+        // 시작 시 버튼에 함수 연결
+        if (startWaveButton != null)
+        {
+            startWaveButton.onClick.AddListener(StartNextWave);
         }
         BaseBuilding.OnBaseDestroyed += OnGameOver;
     }
@@ -67,6 +78,15 @@ public class WaveManager : MonoBehaviour
         }
     }
 
+    // UI 버튼 클릭 시 호출될 함수
+    public void StartNextWave()
+    {
+        if (!_isWaveActive)
+        {
+            StartCoroutine(StartWave());
+        }
+    }
+
     private IEnumerator StartWave()
     {
         // 더 이상 진행할 웨이브가 없으면 종료
@@ -74,6 +94,9 @@ public class WaveManager : MonoBehaviour
 
         _isWaveActive = true;
         _isSpawning = true;
+
+        // 웨이브 진행 중에는 버튼 비활성화 (중복 클릭 방지)
+        if (startWaveButton != null) startWaveButton.interactable = false;
 
         // UI에 웨이브 정보 표시
         if (waveText != null)
@@ -107,10 +130,19 @@ public class WaveManager : MonoBehaviour
 
             for (int i = 0; i < group.count; i++)
             {
-                if (spawnPoints.Length == 0) yield break;
-                Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
+                Transform spawnPoint = null;
 
-                if (group.enemyPrefab != null)
+                // 그룹에 특정 스폰 포인트가 지정되어 있으면 사용
+                if (group.specificSpawnPoint != null)
+                {
+                    spawnPoint = group.specificSpawnPoint;
+                }
+                else if (spawnPoints != null && spawnPoints.Length > 0)
+                {
+                    spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
+                }
+
+                if (spawnPoint != null && group.enemyPrefab != null)
                 {
                     GameObject enemyObj = Instantiate(group.enemyPrefab, spawnPoint.position, spawnPoint.rotation);
                     EnemyUnit enemyUnit = enemyObj.GetComponent<EnemyUnit>();
@@ -168,6 +200,9 @@ public class WaveManager : MonoBehaviour
         {
             StartCoroutine(ShowWaveClearMessage());
             _isWaveActive = false; // 다음 웨이브 시작 가능 상태로 변경
+
+            // 웨이브 클리어 후 다음 웨이브를 시작할 수 있도록 버튼 활성화
+            if (startWaveButton != null) startWaveButton.interactable = true;
         }
     }
 

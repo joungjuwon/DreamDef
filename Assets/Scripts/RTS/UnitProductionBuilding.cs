@@ -109,6 +109,23 @@ public class UnitProductionBuilding : Building
         return finalPosition;
     }
 
+    public override void Upgrade(GameObject newPrefab)
+    {
+        // 업그레이드 시 기존에 소환된 유닛들을 모두 파괴합니다.
+        foreach (var unit in _aliveUnits)
+        {
+            if (unit != null)
+            {
+                unit.OnDeath -= HandleUnitDeath; // 사망 이벤트 구독 해제 (재생성 로직 방지)
+                Destroy(unit.gameObject);
+            }
+        }
+        _aliveUnits.Clear();
+        
+        // 부모 클래스의 업그레이드(건물 교체) 로직 실행
+        base.Upgrade(newPrefab);
+    }
+
     private void OnDestroy()
     {
         // 건물이 파괴되면 추적 중인 유닛들의 이벤트 구독 해제

@@ -6,7 +6,8 @@ using System.Collections.Generic;
 public class ConstructionSite : MonoBehaviour
 {
     [Header("건설 설정")]
-    [SerializeField] private ConstructionUI constructionUI;
+    public List<BuildingData> buildableBuildings; // 이 부지에서 건설 가능한 건물 목록
+    public LayerMask targetLayer; // 클릭 감지할 레이어 (인스펙터에서 설정)
 
     private bool _isBuilt = false;
     private Camera _mainCamera;
@@ -18,11 +19,6 @@ public class ConstructionSite : MonoBehaviour
         {
             Debug.LogError("[ConstructionSite] 오류: 'MainCamera' 태그가 붙은 카메라를 찾을 수 없습니다!");
         }
-
-        if (constructionUI != null)
-            constructionUI.gameObject.SetActive(false);
-        else
-            Debug.LogError("[ConstructionSite] 오류: ConstructionUI가 연결되지 않았습니다!");
     }
 
     private void Update()
@@ -80,7 +76,8 @@ public class ConstructionSite : MonoBehaviour
         // 씬 뷰에서 레이를 그려줍니다 (디버깅용 빨간선)
         Debug.DrawRay(ray.origin, ray.direction * 1000f, Color.red, 1.0f);
         
-        if (Physics.Raycast(ray, out RaycastHit hit))
+        // [수정] 레이어 마스크를 사용하여 원하는 레이어만 감지하고, 트리거도 클릭되도록 Collide로 설정합니다.
+        if (Physics.Raycast(ray, out RaycastHit hit, 1000f, targetLayer, QueryTriggerInteraction.Collide))
         {
             Debug.Log($"[ConstructionSite] Raycast 충돌: {hit.transform.name}");
 
@@ -89,17 +86,17 @@ public class ConstructionSite : MonoBehaviour
             {
                 Debug.Log($"[ConstructionSite] 건설 부지 클릭 성공: {gameObject.name}");
                 
-                if (constructionUI != null)
+                if (ConstructionUI.Instance != null)
                 {
-                    constructionUI.Open(this);
+                    ConstructionUI.Instance.Open(this, buildableBuildings);
                 }
             }
             else
             {
                 // 다른 물체를 클릭했을 때, 현재 이 부지가 UI를 열고 있었다면 닫습니다.
-                if (constructionUI != null && constructionUI.CurrentSite == this)
+                if (ConstructionUI.Instance != null && ConstructionUI.Instance.CurrentSite == this)
                 {
-                    constructionUI.Close();
+                    ConstructionUI.Instance.Close();
                 }
                 Debug.Log($"[ConstructionSite] 다른 물체가 클릭됨: {hit.transform.name}");
             }
@@ -107,9 +104,9 @@ public class ConstructionSite : MonoBehaviour
         else
         {
             // 허공(Skybox 등)을 클릭했을 때도 UI를 닫습니다.
-            if (constructionUI != null && constructionUI.CurrentSite == this)
+            if (ConstructionUI.Instance != null && ConstructionUI.Instance.CurrentSite == this)
             {
-                constructionUI.Close();
+                ConstructionUI.Instance.Close();
             }
             Debug.Log("[ConstructionSite] Raycast가 허공을 클릭했습니다.");
         }
@@ -131,7 +128,7 @@ public class ConstructionSite : MonoBehaviour
         _isBuilt = true;
         
         // UI 숨김 및 부지 비활성화
-        if (constructionUI != null) constructionUI.Close();
+        if (ConstructionUI.Instance != null) ConstructionUI.Instance.Close();
         
         // [수정] 즉시 파괴하면 에디터 인스펙터 갱신 충돌로 오류가 발생할 수 있으므로 0.1초 딜레이를 줍니다.
         Destroy(gameObject, 0.1f);

@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2de715da4a9ef104fb124b884afbe422, type: 3}
+  m_Name: Tower_LV_2
+  m_EditorClassIdentifier: Assembly-CSharp::BuildingData
+  buildingName: "\uD0C0\uC6CC"
+  buildCost: 20
+  description: "\uC801\uC744 \uACF5\uACA9\uD558\uB294 \uD0C0\uC6CC"
+  icon: {fileID: 21300000, guid: c07fc153f57564f4485a69f72b1cd119, type: 3}
+  buildingPrefab: {fileID: 360259679437433415, guid: cd4e953be4702514491b452c108584c2, type: 3}
+  nextUpgrade: {fileID: 11400000, guid: 8817eb464ef0f634882363f3bfae4681, type: 2}

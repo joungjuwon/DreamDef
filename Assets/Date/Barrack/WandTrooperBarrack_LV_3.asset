@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2de715da4a9ef104fb124b884afbe422, type: 3}
+  m_Name: WandTrooperBarrack_LV_3
+  m_EditorClassIdentifier: Assembly-CSharp::BuildingData
+  buildingName: "\uC720\uB2DB \uAC74\uBB3C"
+  buildCost: 20
+  description: "\uC720\uB2DB"
+  icon: {fileID: 21300000, guid: 9c8ba5a27cc50114aafbc4f9756d60f8, type: 3}
+  buildingPrefab: {fileID: 3642291805714058608, guid: 453ea893fffd95249a8dd1a2a165e7fe, type: 3}
+  nextUpgrade: {fileID: 0}

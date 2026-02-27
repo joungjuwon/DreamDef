@@ -18,8 +18,10 @@ public class Tower : Building
     private float _lastTargetCheckTime;
     private const float TARGET_CHECK_INTERVAL = 0.2f;
 
-    void Update()
+    protected override void Update()
     {
+        base.Update(); // 부모(Building)의 클릭 감지 로직 실행
+
         // 주기적으로 타겟을 찾습니다.
         if (Time.time > _lastTargetCheckTime + TARGET_CHECK_INTERVAL)
         {

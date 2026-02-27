@@ -53,7 +53,7 @@ public class ResourceManager : MonoBehaviour
     {
         if (resourceText != null)
         {
-            resourceText.text = "자원: " + _currentResources;
+            resourceText.text = "" + _currentResources;
         }
     }
 }

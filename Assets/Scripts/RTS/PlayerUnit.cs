@@ -388,18 +388,23 @@ public class PlayerUnit : RTSUnit, ISelectable, IDamageable
         if (_animator != null)
         {
             _animator.SetBool("Dead", false);
-            _animator.SetTrigger("Revive");
+            _animator.SetBool("Revive", true);
         }
 
-        // 5. 컴포넌트 및 시각적 요소 활성화
+        // [수정] 애니메이션 재생 시간만큼 대기 (이 동안은 콜라이더가 꺼져있어 피격/타겟팅 불가)
+        yield return new WaitForSeconds(reviveAnimationDuration);
+
+        // 5. 컴포넌트 및 시각적 요소 활성화 (애니메이션 종료 후)
         foreach (var col in colliders) col.enabled = true;
         
         if (_agent != null) _agent.enabled = true;
         if (healthBarInstance != null) healthBarInstance.gameObject.SetActive(true);
         if (healthBarInstance != null) healthBarInstance.UpdateHealth(_currentHealth, maxHealth);
 
-        // [수정] 애니메이션 재생 시간만큼 대기 후 Idle 상태로 전환 (애니메이션 이벤트 의존성 제거)
-        yield return new WaitForSeconds(reviveAnimationDuration);
+        if (_animator != null)
+        {
+            _animator.SetBool("Revive", false);
+        }
         SetState(UnitState.Idle);
     }
 
