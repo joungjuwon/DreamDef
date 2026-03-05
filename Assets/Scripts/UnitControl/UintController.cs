@@ -221,13 +221,22 @@ public class UnitController : MonoBehaviour
     private void UpdateSelectionBoxVisual()
     {
         if (selectionBoxUI == null) return;
-
-        float width = _currentMousePos.x - _startMousePosition.x;
-        float height = _currentMousePos.y - _startMousePosition.y;
-
-        selectionBoxUI.sizeDelta = new Vector2(Mathf.Abs(width), Mathf.Abs(height));
-        // RectTransform의 Pivot이 (0.5, 0.5)일 때의 위치 계산
-        selectionBoxUI.position = (_startMousePosition + _currentMousePos) / 2f;
+        
+        RectTransform parentRect = selectionBoxUI.parent as RectTransform;
+        if (parentRect == null) return;
+        
+        Vector2 localStart;
+        Vector2 localCurrent;
+        
+        // Canvas Scaler에 의한 크기 왜곡을 방지하기 위해 로컬 좌표로 변환합니다.
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(parentRect, _startMousePosition, null, out localStart);
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(parentRect, _currentMousePos, null, out localCurrent);
+        
+        Vector2 size = new Vector2(Mathf.Abs(localCurrent.x - localStart.x), Mathf.Abs(localCurrent.y - localStart.y));
+        Vector2 center = (localStart + localCurrent) / 2f;
+        
+        selectionBoxUI.localPosition = center;
+        selectionBoxUI.sizeDelta = size;
     }
 
     private void BoxSelectCheck()

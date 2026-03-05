@@ -1,6 +1,5 @@
 using UnityEngine;
 using TMPro; // TextMeshPro를 사용하기 위해 필요합니다.
-using UnityEngine.InputSystem; // 새로운 인풋 시스템을 위해 추가
 using System.Collections;
 using UnityEngine.UI; // Button 컴포넌트 사용을 위해 추가
 
@@ -67,20 +66,12 @@ public class WaveManager : MonoBehaviour
         }
     }
 
-    // PlayerInput 컴포넌트가 "SendMessages" 방식으로 호출하는 함수입니다.
-    // Input Action Asset에 "StartWave"라는 이름의 Action이 있어야 합니다.
-    private void OnStartWave(InputValue value)
-    {
-        // 버튼이 눌렸고, 현재 웨이브가 진행 중이 아닐 때 웨이브를 시작합니다.
-        if (value.isPressed && !_isWaveActive)
-        {
-            StartCoroutine(StartWave());
-        }
-    }
-
     // UI 버튼 클릭 시 호출될 함수
     public void StartNextWave()
     {
+        // UI(옵션, 홈 버튼 등)가 열려있어 일시정지 상태라면 웨이브 시작 불가
+        if (Time.timeScale == 0f) return;
+
         if (!_isWaveActive)
         {
             StartCoroutine(StartWave());

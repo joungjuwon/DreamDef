@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 public class OptionUI : MonoBehaviour
 {
@@ -122,9 +123,29 @@ public class OptionUI : MonoBehaviour
         if (closeBtn != null) closeBtn.onClick.AddListener(CloseOptions);
     }
 
+    // Input System의 "Pause" 액션(ESC 키)과 연결될 함수입니다.
+    // PlayerInput 컴포넌트의 Behavior가 "Send Messages"일 때, Action 이름이 "Pause"라면 이 함수가 호출됩니다.
+    public void OnPause(InputValue value)
+    {
+        if (value.isPressed)
+        {
+            if (optionWindow != null && optionWindow.activeSelf)
+            {
+                CloseOptions();
+            }
+            else
+            {
+                OpenOptions();
+            }
+        }
+    }
+
     // 옵션 창 열기
     public void OpenOptions()
     {
+        // 이미 일시정지 상태(다른 팝업이 떠있음)라면 옵션 창을 열지 않음
+        if (Time.timeScale == 0f) return;
+
         if (optionWindow != null)
         {
             optionWindow.SetActive(true);
@@ -148,6 +169,13 @@ public class OptionUI : MonoBehaviour
     // 옵션 창 닫기
     public void CloseOptions()
     {
+        // [수정] 옵션 창을 닫을 때 열려있던 하위 패널들도 모두 비활성화합니다.
+        if (languagePanel != null) languagePanel.SetActive(false);
+        if (soundPanel != null) soundPanel.SetActive(false);
+        if (controlsPanel != null) controlsPanel.SetActive(false);
+        if (gameInfoPanel != null) gameInfoPanel.SetActive(false);
+        if (categoryButtonGroup != null) categoryButtonGroup.SetActive(false);
+
         if (optionWindow != null)
         {
             optionWindow.SetActive(false);

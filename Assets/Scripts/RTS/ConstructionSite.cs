@@ -98,7 +98,6 @@ public class ConstructionSite : MonoBehaviour
                 {
                     ConstructionUI.Instance.Close();
                 }
-                Debug.Log($"[ConstructionSite] 다른 물체가 클릭됨: {hit.transform.name}");
             }
         }
         else
@@ -108,7 +107,6 @@ public class ConstructionSite : MonoBehaviour
             {
                 ConstructionUI.Instance.Close();
             }
-            Debug.Log("[ConstructionSite] Raycast가 허공을 클릭했습니다.");
         }
     }
 

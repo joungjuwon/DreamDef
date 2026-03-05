@@ -42,6 +42,7 @@ GameObject:
   - component: {fileID: 5285206816377631012}
   - component: {fileID: 8946982311719593848}
   - component: {fileID: 114616638011057721}
+  - component: {fileID: -3442037215031268070}
   m_Layer: 8
   m_Name: WandTroopBuilding_LV_1
   m_TagString: Untagged
@@ -115,6 +116,22 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 6, y: 7.878493, z: 6}
   m_Center: {x: 0, y: 3.8851173, z: 0}
+--- !u!208 &-3442037215031268070
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3798176701391840650}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &7692182899776280742
 GameObject:
   m_ObjectHideFlags: 0

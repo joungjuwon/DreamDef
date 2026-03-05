@@ -34,6 +34,9 @@ public class HomeButtonUI : MonoBehaviour
 
     private void OnHomeButtonClicked()
     {
+        // 이미 일시정지 상태(옵션 창 등)라면 확인 팝업을 열지 않음
+        if (Time.timeScale == 0f) return;
+
         // 홈 버튼 클릭 시 패널 열기
         if (confirmationPanel != null) 
             confirmationPanel.SetActive(true);

@@ -39,4 +39,11 @@ public class CameraController : MonoBehaviour
         Vector3 targetPosition = transform.position + dir * moveSpeed * Time.deltaTime;
         transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref _currentVelocity, smoothTime);
     }
+
+    // [추가] 미니맵 클릭 시 카메라 위치를 강제로 설정하는 함수
+    public void SetPosition(Vector3 position)
+    {
+        transform.position = position;
+        _currentVelocity = Vector3.zero; // 이동 중이었다면 관성을 초기화
+    }
 }

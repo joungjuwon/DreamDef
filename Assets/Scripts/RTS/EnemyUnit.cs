@@ -13,6 +13,10 @@ public class EnemyUnit : RTSUnit, IDamageable
 
     private Transform _targetBase;
 
+    [Header("Movement Stats")]
+    public float moveSpeed = 3.5f;   // 본진 이동 속도 (기본)
+    public float chaseSpeed = 5.0f;  // 추적 이동 속도 (공격 상태)
+
     [Header("Combat Stats")]
     public float maxHealth = 100f;
     public float attackDamage = 10f;
@@ -64,6 +68,9 @@ public class EnemyUnit : RTSUnit, IDamageable
             }
         }
         
+        // 초기 속도 설정
+        if (_agent != null) _agent.speed = moveSpeed;
+
         // 태그가 "Base"인 오브젝트를 찾아 목표로 설정
         GameObject baseObj = GameObject.FindGameObjectWithTag("Base");
         if (baseObj != null)
@@ -111,9 +118,22 @@ public class EnemyUnit : RTSUnit, IDamageable
         switch (_currentState)
         {
             case EnemyState.Moving:
-                if (_agent.isOnNavMesh) _agent.isStopped = false;
+                if (_agent.isOnNavMesh)
+                {
+                    _agent.speed = moveSpeed; // 이동 상태 속도 적용
+                    _agent.isStopped = false;
+                    // [수정] 상태 진입 시 이동 명령을 한 번만 내려서 Update에서의 중복 호출을 방지합니다.
+                    if (_targetBase != null)
+                    {
+                        MoveTo(_targetBase.position);
+                    }
+                }
                 break;
             case EnemyState.Attacking:
+                if (_agent.isOnNavMesh)
+                {
+                    _agent.speed = chaseSpeed; // 추적 상태 속도 적용
+                }
                 break;
             case EnemyState.Dead:
                 HandleDeath();
@@ -123,17 +143,35 @@ public class EnemyUnit : RTSUnit, IDamageable
 
     private void UpdateMoving()
     {
-        // 주기적으로 타겟 감지
+        // 1. 이동 중 주기적으로 주변의 적(유닛, 건물)을 감지합니다.
+        // 감지 범위(detectionRange) 내에 적이 들어오면 타겟으로 설정하고 공격 상태로 전환합니다.
         if (Time.time >= _lastDetectionTime + 0.2f)
         {
             DetectEnemies();
             _lastDetectionTime = Time.time;
         }
 
-        // 타겟이 없으면 본진으로 이동
+        // 상태가 변경되었을 수 있으므로 확인 (DetectEnemies에서 Attacking으로 바뀔 수 있음)
+        if (_currentState != EnemyState.Moving) return;
+
+        // 2. 감지된 타겟이 없다면, 거리나 타겟팅 여부와 상관없이 무조건 베이스(본진)를 향해 이동합니다.
         if (_targetUnit == null && _targetBase != null)
         {
-            MoveTo(_targetBase.position);
+            // [수정] 매 프레임 SetDestination 호출을 방지합니다.
+            // 경로가 없거나 멈춰있을 때만, 그리고 목표와 거리가 멀 때만 이동 명령을 다시 내립니다.
+            if (!_agent.pathPending && (!_agent.hasPath || _agent.isStopped))
+            {
+                Vector3 currentPos = transform.position;
+                Vector3 targetPos = _targetBase.position;
+                currentPos.y = 0;
+                targetPos.y = 0;
+
+                // 목표와 충분히 멀리 떨어져 있다면(2.0f 거리 기준) 이동 명령 재시도
+                if (Vector3.SqrMagnitude(currentPos - targetPos) > 4.0f)
+                {
+                    MoveTo(_targetBase.position);
+                }
+            }
         }
     }
 

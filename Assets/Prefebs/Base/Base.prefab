@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 6957002835472628328}
   - component: {fileID: 5769807490786609114}
   - component: {fileID: 6295405319534796081}
+  - component: {fileID: 5401757702809510636}
   m_Layer: 10
   m_Name: Base
   m_TagString: Base
@@ -30,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 4.16, y: 1.5, z: 16.79}
-  m_LocalScale: {x: 3, y: 3, z: 3}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 9057638576110856345}
@@ -52,7 +53,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4375831665356376044}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -130,6 +131,27 @@ MonoBehaviour:
   isIndestructible: 0
   healthBarPrefab: {fileID: 1563760308068517248, guid: d07d5779a313b0e48962705bea5febc1, type: 3}
   healthBarAttachPoint: {fileID: 9057638576110856345}
+  clickLayer:
+    serializedVersion: 2
+    m_Bits: 4091
+  buildingData: {fileID: 0}
+  nextUpgrade: {fileID: 0}
+--- !u!208 &5401757702809510636
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4375831665356376044}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &6404918943936007305
 GameObject:
   m_ObjectHideFlags: 0

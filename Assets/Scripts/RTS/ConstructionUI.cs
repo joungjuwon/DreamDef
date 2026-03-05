@@ -51,8 +51,9 @@ public class ConstructionUI : MonoBehaviour
         if (confirmButton != null) confirmButton.onClick.AddListener(OnConfirm);
         if (cancelButton != null) cancelButton.onClick.AddListener(OnCancel);
 
-        // 시작 시 비활성화
-        gameObject.SetActive(false);
+        // 시작 시 활성화 (항상 켜져있음)
+        gameObject.SetActive(true);
+        Close(); // 초기화 (내용 비우기)
     }
 
     private void GenerateButtons(List<BuildingData> buildings)
@@ -214,16 +215,51 @@ public class ConstructionUI : MonoBehaviour
         // 업그레이드 모드일 때는 취소 시 바로 닫기
         if (_isUpgradeMode) { Close(); return; }
 
-        // 취소 시 UI를 닫는 대신 1단계(선택) 화면으로 돌아갑니다.
-        if (selectionGroup != null) selectionGroup.SetActive(true);
-        if (confirmationGroup != null) confirmationGroup.SetActive(false);
-        _selectedData = null;
+        // 건물이 선택된 상태라면 선택 취소 (1단계로 돌아가기)
+        if (_selectedData != null)
+        {
+            if (selectionGroup != null) selectionGroup.SetActive(true);
+            if (confirmationGroup != null) confirmationGroup.SetActive(false);
+            _selectedData = null;
+            if (confirmButton) confirmButton.interactable = false;
+        }
+        else
+        {
+            // 아무것도 선택되지 않은 상태에서 취소를 누르면 UI 초기화 (선택 해제)
+            Close();
+        }
     }
 
     public void Close()
     {
-        gameObject.SetActive(false);
+        // gameObject.SetActive(false); // 패널은 끄지 않고 내용만 초기화합니다.
+
+        // UI 내용 및 상태 초기화
         _currentSite = null;
         _targetBuilding = null;
+        _selectedData = null;
+        _isUpgradeMode = false;
+
+        // 버튼 제거
+        if (buttonContainer != null)
+        {
+            foreach (Transform child in buttonContainer) Destroy(child.gameObject);
+        }
+
+        // 텍스트 및 패널 초기화
+        if (nameText) nameText.text = "건물을 선택하세요";
+        if (costText) costText.text = "-";
+        if (descriptionText) descriptionText.text = "";
+        if (buildingImage) buildingImage.enabled = false;
+
+        if (selectionGroup != null) selectionGroup.SetActive(true);
+        if (confirmationGroup != null) confirmationGroup.SetActive(false);
+
+        if (confirmButton)
+        {
+            confirmButton.gameObject.SetActive(true);
+            confirmButton.interactable = false;
+            confirmButton.GetComponentInChildren<TextMeshProUGUI>().text = "건설";
+        }
     }
 }

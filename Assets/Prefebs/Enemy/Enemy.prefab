@@ -228,7 +228,7 @@ NavMeshAgent:
   m_Height: 2
   m_BaseOffset: 1
   m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
+  m_ObstacleAvoidanceType: 1
 --- !u!54 &6419077277613659440
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -281,6 +281,7 @@ MonoBehaviour:
   targetLayer:
     serializedVersion: 2
     m_Bits: 1288
+  resourceReward: 10
   _animator: {fileID: 7364158818155073145}
   priorityTags: []
   healthBarPrefab: {fileID: 1563760308068517248, guid: d07d5779a313b0e48962705bea5febc1, type: 3}
